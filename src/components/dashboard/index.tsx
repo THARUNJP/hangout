@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
+import { sessions } from "../../lib/constant";
+
 function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="w-full max-w-xl bg-white rounded-xl shadow-lg p-6 space-y-6">
-        
         {/* Header */}
         <div>
           <h1 className="text-2xl font-semibold text-gray-800">
@@ -27,46 +29,35 @@ function Dashboard() {
 
         {/* Sessions List */}
         <div className="space-y-3">
-          <h2 className="text-lg font-medium text-gray-700">
-            Active Sessions
-          </h2>
+          <h2 className="text-lg font-medium text-gray-700">Active Sessions</h2>
 
-          {/* Session Card */}
-          <div className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3">
-            <div>
-              <p className="font-medium text-gray-800">
-                abc-defg-hij
-              </p>
-              <p className="text-sm text-gray-500">
-                Participants: 2
-              </p>
-            </div>
-            <button className="bg-green-600 text-white px-4 py-1.5 rounded-md hover:bg-green-700 transition">
-              Join
-            </button>
-          </div>
-
-          {/* Session Card */}
-          <div className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3">
-            <div>
-              <p className="font-medium text-gray-800">
-                xyz-lmn-opq
-              </p>
-              <p className="text-sm text-gray-500">
-                Participants: 1
-              </p>
-            </div>
-            <button className="bg-green-600 text-white px-4 py-1.5 rounded-md hover:bg-green-700 transition">
-              Join
-            </button>
-          </div>
-
-          {/* Empty State (optional) */}
-          {/* <p className="text-sm text-gray-500">No active sessions</p> */}
+          {sessions.length === 0 ? (
+            <p className="text-sm text-gray-500">No active sessions</p>
+          ) : (
+            sessions.map((session) => (
+              <Link
+                key={session.sessionCode}
+                className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3"
+                to={`meet/${session.sessionCode}`}
+              >
+                <div>
+                  <p className="font-medium text-gray-800">
+                    {session.sessionCode}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Participants: {session.participants}
+                  </p>
+                </div>
+                <button className="bg-green-600 text-white px-4 py-1.5 rounded-md hover:bg-green-700 transition">
+                  Join
+                </button>
+              </Link>
+            ))
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-export default Dashboard
+export default Dashboard;
