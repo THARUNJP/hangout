@@ -19,3 +19,13 @@ export function getGridClass(count: number) {
       return "grid-cols-4 grid-rows-3";
   }
 }
+
+export async function getUserDevice() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true,video:true})
+    return stream ;
+  } catch (err) {
+    console.log(err);
+    return null
+  }
+}
