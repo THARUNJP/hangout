@@ -1,74 +1,19 @@
 
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Dashboard from "./components/dashboard";
 
-function App() {
+
+// At last need to implement lazy load if time is there
+const App: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="w-full max-w-xl bg-white rounded-xl shadow-lg p-6 space-y-6">
-        
-        {/* Header */}
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-800">
-            Realtime Session Lobby
-          </h1>
-          <p className="text-sm text-gray-500">
-            Create a session or join an existing one
-          </p>
-        </div>
-
-        {/* Create Session */}
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Enter session code"
-            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">
-            Create
-          </button>
-        </div>
-
-        {/* Sessions List */}
-        <div className="space-y-3">
-          <h2 className="text-lg font-medium text-gray-700">
-            Active Sessions
-          </h2>
-
-          {/* Session Card */}
-          <div className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3">
-            <div>
-              <p className="font-medium text-gray-800">
-                abc-defg-hij
-              </p>
-              <p className="text-sm text-gray-500">
-                Participants: 2
-              </p>
-            </div>
-            <button className="bg-green-600 text-white px-4 py-1.5 rounded-md hover:bg-green-700 transition">
-              Join
-            </button>
-          </div>
-
-          {/* Session Card */}
-          <div className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3">
-            <div>
-              <p className="font-medium text-gray-800">
-                xyz-lmn-opq
-              </p>
-              <p className="text-sm text-gray-500">
-                Participants: 1
-              </p>
-            </div>
-            <button className="bg-green-600 text-white px-4 py-1.5 rounded-md hover:bg-green-700 transition">
-              Join
-            </button>
-          </div>
-
-          {/* Empty State (optional) */}
-          {/* <p className="text-sm text-gray-500">No active sessions</p> */}
-        </div>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
 
-export default App
+export default App;
+
