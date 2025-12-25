@@ -14,6 +14,6 @@ export function leaveSession(sessionCode: string) {
   socket.emit("leave-session", { sessionCode });
 }
 
-socket.on("participants-updated", ({ participants, message }) => {
-  console.log("....participants updated .....here", participants, message);
-});
+// socket.on("participants-updated", ({ participants, message }) => {
+//   console.log("....participants updated .....here", participants, message);
+// });

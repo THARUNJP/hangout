@@ -22,10 +22,21 @@ export function getGridClass(count: number) {
 
 export async function getUserDevice() {
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({audio:true,video:true})
-    return stream ;
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: true,
+    });
+    return stream;
   } catch (err) {
     console.log(err);
-    return null
+    return null;
   }
 }
+
+export const lsSetItem = (key: string, val: string) => {
+  localStorage.setItem(key, val);
+};
+
+export const lsGetItem = (key: string) => {
+ return localStorage.getItem(key);
+};

@@ -1,12 +1,48 @@
-import { Link } from "react-router-dom";
 import { sessions } from "../../lib/constant";
 import { useBlockBrowserNavigation } from "../../hooks/usenavigationblock";
+import { useState } from "react";
+import NamePromptModal from "../propt-modal";
+import { lsGetItem, lsSetItem } from "../../lib/helper";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
+  const [showNamePrompt, setShowNamePrompt] = useState(false);
+  const [selectedSessionCode, setSelectedSessionCode] = useState<string | null>(
+    null
+  );
+
   useBlockBrowserNavigation();
+  const navigate = useNavigate();
+
+  const handleJoinClick = (sessionCode: string) => {
+    const storedName = lsGetItem("name");
+
+    setSelectedSessionCode(sessionCode);
+
+    if (storedName) {
+      navigate(`/meet/${sessionCode}`);
+    } else {
+      setShowNamePrompt(true);
+    }
+  };
+
+  const handleContinue = (name: string) => {
+    if (!selectedSessionCode) return;
+
+    lsSetItem("name", name);
+    setShowNamePrompt(false);
+
+    navigate(`/meet/${selectedSessionCode}`);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <NamePromptModal
+        open={showNamePrompt}
+        onContinue={handleContinue}
+        onClose={() => setShowNamePrompt(false)}
+      />
+
       <div className="w-full max-w-xl bg-white rounded-xl shadow-lg p-6 space-y-6">
         {/* Header */}
         <div>
@@ -38,10 +74,9 @@ function Dashboard() {
             <p className="text-sm text-gray-500">No active sessions</p>
           ) : (
             sessions.map((session) => (
-              <Link
+              <div
                 key={session.sessionCode}
                 className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3"
-                to={`meet/${session.sessionCode}`}
               >
                 <div>
                   <p className="font-medium text-gray-800">
@@ -51,10 +86,14 @@ function Dashboard() {
                     Participants: {session.participants}
                   </p>
                 </div>
-                <button className="bg-green-600 text-white px-4 py-1.5 rounded-md hover:bg-green-700 transition">
+
+                <button
+                  onClick={() => handleJoinClick(session.sessionCode)}
+                  className="bg-green-600 text-white px-4 py-1.5 rounded-md hover:bg-green-700 transition"
+                >
                   Join
                 </button>
-              </Link>
+              </div>
             ))
           )}
         </div>

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { socket } from "../socket";
-import { joinSession, leaveSession } from "../socket/session.socket";
+import { createSession, joinSession, leaveSession } from "../socket/session.socket";
+import { CallType } from "../lib/constant";
 
 export function useMeetingSocket(sessionCode: string, name: string) {
   useEffect(() => {
@@ -14,7 +15,7 @@ export function useMeetingSocket(sessionCode: string, name: string) {
     socket.on("participants-updated", (data) => {
     console.log("participants update", data);
   });
-    
+    createSession(sessionCode,CallType.SFU)
     joinSession(sessionCode, name);
     return () => {
        socket.off("participants-updated");
