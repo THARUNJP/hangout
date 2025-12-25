@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { getGridClass, getUserDevice } from "../../../lib/helper";
 import type { Participant } from "../../../types/types";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMeetingSocket } from "../../../hooks/useMeeting";
+import { useMeetingSocket } from "../../../hooks/usemeeting";
 
 export default function VideoGrid() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -26,7 +26,7 @@ export default function VideoGrid() {
       stream?.getTracks().forEach((track) => track.stop());
     };
   }, []);
-  if (code) useMeetingSocket(code, "thax");
+  if (code) useMeetingSocket(code, `user ${Date.now()}`);
 
   // Mock participants (UI only)
   const participants: Participant[] = Array.from({ length: 5 }, (_, i) => ({

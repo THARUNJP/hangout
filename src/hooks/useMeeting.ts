@@ -6,11 +6,18 @@ export function useMeetingSocket(sessionCode: string, name: string) {
   useEffect(() => {
     if (!sessionCode) return;
     socket.connect();
-    console.log("socket connected to server");
+
+    socket.on("connect",()=>{
+       console.log("socket connected to server");
+    })
+
+    socket.on("participants-updated", (data) => {
+    console.log("participants update", data);
+  });
     
     joinSession(sessionCode, name);
     return () => {
-      
+       socket.off("participants-updated");
       if (socket.connected) {
         leaveSession(sessionCode);
         socket.disconnect();
