@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { getGridClass, getUserDevice } from "../../../lib/helper";
 import type { Participant } from "../../../types/types";
+import { useParams } from "react-router-dom";
 
 export default function VideoGrid() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const { code } = useParams<{ code: string }>();
+console.log(code);
 
   useEffect(() => {
     async function fetchUserMedia() {
