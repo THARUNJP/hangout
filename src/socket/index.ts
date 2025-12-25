@@ -4,9 +4,6 @@ const SOCKET_URL = import.meta.env.VITE_SIGNALING_URL;
 
 export const socket: Socket = io(SOCKET_URL, {
   transports: ["websocket"],
-//   autoConnect: false,
+  autoConnect: false,
 });
 
-socket.on("connect", () => {
-  console.log("socket connected:", socket.id);
-});
