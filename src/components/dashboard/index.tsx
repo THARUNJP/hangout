@@ -1,7 +1,17 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { sessions } from "../../lib/constant";
+import { joinSession } from "../../socket/session.socket";
 
 function Dashboard() {
+  const navigate = useNavigate();
+
+  function handleJoinsession(sessionCode: string) {
+    console.log(sessionCode);
+    // here signalling logic
+    joinSession(sessionCode,"thax")
+
+    navigate(`meet/${sessionCode}`);
+  }
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="w-full max-w-xl bg-white rounded-xl shadow-lg p-6 space-y-6">
@@ -35,10 +45,10 @@ function Dashboard() {
             <p className="text-sm text-gray-500">No active sessions</p>
           ) : (
             sessions.map((session) => (
-              <Link
+              <div
                 key={session.sessionCode}
                 className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3"
-                to={`meet/${session.sessionCode}`}
+                onClick={() => handleJoinsession(session.sessionCode)}
               >
                 <div>
                   <p className="font-medium text-gray-800">
@@ -51,7 +61,7 @@ function Dashboard() {
                 <button className="bg-green-600 text-white px-4 py-1.5 rounded-md hover:bg-green-700 transition">
                   Join
                 </button>
-              </Link>
+              </div>
             ))
           )}
         </div>

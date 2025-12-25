@@ -12,3 +12,8 @@ export const sessions = [
     participants: 4,
   },
 ];
+
+export const CallType = {
+  RTC: "RTC",
+  SFU: "SFU",
+} as const;
