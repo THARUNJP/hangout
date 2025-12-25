@@ -5,9 +5,9 @@ export function createSession(sessionCode: string, callType: CallType) {
   socket.emit("create-session", { sessionCode, callType });
 }
 
-export function joinSession(sessionCode: string, username: string) {
+export function joinSession(sessionCode: string, participantName: string) {
     console.log("....calls");
-  socket.emit("join-session", { sessionCode, username });
+  socket.emit("join-session", { sessionCode, participantName });
 }
 
 export function leaveSession(sessionCode: string) {

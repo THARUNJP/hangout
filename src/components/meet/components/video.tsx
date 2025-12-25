@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { getGridClass, getUserDevice } from "../../../lib/helper";
 import type { Participant } from "../../../types/types";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useMeetingSocket } from "../../../hooks/useMeeting";
 
 export default function VideoGrid() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const { code } = useParams<{ code: string }>();
-console.log(code);
-
+  const navigate = useNavigate();
+  // aslo later need to check the sessioncode is valid and navigate if not
   useEffect(() => {
+    if (!code) navigate("/");
     async function fetchUserMedia() {
       const stream = await getUserDevice();
       if (stream && videoRef.current) {
@@ -24,6 +26,7 @@ console.log(code);
       stream?.getTracks().forEach((track) => track.stop());
     };
   }, []);
+  if (code) useMeetingSocket(code, "thax");
 
   // Mock participants (UI only)
   const participants: Participant[] = Array.from({ length: 5 }, (_, i) => ({
