@@ -16,54 +16,53 @@ export function useMeetingSocket(sessionCode: string, name: string) {
     if (!socket.connected) {
       socket.connect();
     }
+
     if (!mediaSocket.connected) {
       mediaSocket.connect();
     }
-    
-    const handleConnect = () => {
+
+    const onConnect = () => {
       console.log("signaling socket connected");
     };
 
-    const handleParticipantsUpdated = ({
+    const onMediaConnect = () => {
+      console.log("media socket connected");
+    };
+
+    const onParticipantsUpdated = ({
       participants,
       message,
     }: {
       participants: any[];
       message: string;
     }) => {
-      console.log("participants updated", participants);
+      console.log("participants update", participants);
       setParticipants(participants);
     };
 
-    socket.on("connect", handleConnect);
-    socket.on("participants-updated", handleParticipantsUpdated);
+    socket.on("connect", onConnect);
+    mediaSocket.on("connect", onMediaConnect);
+    socket.on("participants-updated", onParticipantsUpdated);
 
-  
     createSession(sessionCode, CallType.SFU);
     joinSession(sessionCode, name);
 
-    
     return () => {
-      // tell server first
+      // IMPORTANT: tell server first
       leaveSession(sessionCode);
 
       // remove listeners
-      socket.off("connect", handleConnect);
-      socket.off("participants-updated", handleParticipantsUpdated);
+      socket.off("connect", onConnect);
+      socket.off("participants-updated", onParticipantsUpdated);
+      mediaSocket.off("connect", onMediaConnect);
 
-      // disconnect sockets
-      if (socket.connected) {
-        socket.disconnect();
-      }
+      // disconnect both sockets
+      if (socket.connected) socket.disconnect();
+      if (mediaSocket.connected) mediaSocket.disconnect();
 
-      if (mediaSocket.connected) {
-        mediaSocket.disconnect();
-      }
-      console.log("sockets disconnected");
+      console.log("all sockets disconnected");
     };
   }, [sessionCode, name]);
 
-  return {
-    participants,
-  };
+  return { participants };
 }
