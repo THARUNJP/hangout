@@ -7,3 +7,7 @@ export const socket: Socket = io(SOCKET_URL, {
   autoConnect: false,
 });
 
+export const mediaSocket: Socket = io(`${SOCKET_URL}/mediasoup`, {
+  autoConnect: false,
+  transports: ["websocket"],
+});

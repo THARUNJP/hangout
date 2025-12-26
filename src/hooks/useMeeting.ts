@@ -1,29 +1,69 @@
-import { useEffect } from "react";
-import { socket } from "../socket";
-import { createSession, joinSession, leaveSession } from "../socket/session.socket";
+import { useEffect, useState } from "react";
+import { mediaSocket, socket } from "../socket";
+import {
+  createSession,
+  joinSession,
+  leaveSession,
+} from "../socket/session.socket";
 import { CallType } from "../lib/constant";
 
 export function useMeetingSocket(sessionCode: string, name: string) {
+  const [participants, setParticipants] = useState<any[]>([]);
+
   useEffect(() => {
-    if (!sessionCode) return;
-    socket.connect();
+    if (!sessionCode || !name) return;
 
-    socket.on("connect",()=>{
-       console.log("socket connected to server");
-    })
-
-    socket.on("participants-updated", (data) => {
-    console.log("participants update", data);
-  });
-    createSession(sessionCode,CallType.SFU)
-    joinSession(sessionCode, name);
-    return () => {
-       socket.off("participants-updated");
-      if (socket.connected) {
-        leaveSession(sessionCode);
-        socket.disconnect();
-        console.log("socket disconnected to server");
-      }
+    if (!socket.connected) {
+      socket.connect();
+    }
+    if (!mediaSocket.connected) {
+      mediaSocket.connect();
+    }
+    
+    const handleConnect = () => {
+      console.log("signaling socket connected");
     };
-  }, [sessionCode]);
+
+    const handleParticipantsUpdated = ({
+      participants,
+      message,
+    }: {
+      participants: any[];
+      message: string;
+    }) => {
+      console.log("participants updated", participants);
+      setParticipants(participants);
+    };
+
+    socket.on("connect", handleConnect);
+    socket.on("participants-updated", handleParticipantsUpdated);
+
+  
+    createSession(sessionCode, CallType.SFU);
+    joinSession(sessionCode, name);
+
+    
+    return () => {
+      // tell server first
+      leaveSession(sessionCode);
+
+      // remove listeners
+      socket.off("connect", handleConnect);
+      socket.off("participants-updated", handleParticipantsUpdated);
+
+      // disconnect sockets
+      if (socket.connected) {
+        socket.disconnect();
+      }
+
+      if (mediaSocket.connected) {
+        mediaSocket.disconnect();
+      }
+      console.log("sockets disconnected");
+    };
+  }, [sessionCode, name]);
+
+  return {
+    participants,
+  };
 }
