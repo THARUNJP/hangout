@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { getGridClass, getUserDevice, lsGetItem } from "../../../lib/helper";
-import type { Participant } from "../../../types/types";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMeetingSocket } from "../../../hooks/usemeeting";
 
@@ -27,13 +26,16 @@ export default function VideoGrid() {
       stream?.getTracks().forEach((track) => track.stop());
     };
   }, []);
-  if (code) useMeetingSocket(code, name);
+  const { participants } = useMeetingSocket(code || "", name) || [];
+
+  console.log(participants,"?");
+  
 
   // Mock participants (UI only)
-  const participants: Participant[] = Array.from({ length: 5 }, (_, i) => ({
-    id: String(i),
-    name: `User ${i + 1}`,
-  }));
+  // const participants: Participant[] = Array.from({ length: 5 }, (_, i) => ({
+  //   id: String(i),
+  //   name: `User ${i + 1}`,
+  // }));
 
   return (
     <div className="flex-1 p-4 h-[calc(100vh-(4rem+3.5rem))]">
@@ -46,7 +48,7 @@ export default function VideoGrid() {
       >
         {participants.map((p, index) => (
           <div
-            key={p.id}
+            key={p.scoketId}
             className="w-full h-full bg-black rounded-lg flex items-center justify-center text-white"
           >
             {index === 0 ? (

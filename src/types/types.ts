@@ -6,7 +6,7 @@ export type Participant = {
 };
 
 export type Participants = {
-  id: string;                 // userId (stable)
+  scoketId: string;                 // userId (stable)
   name?: string;              // optional for now
 
   // Media
@@ -15,8 +15,8 @@ export type Participants = {
   audioTrack?: MediaStreamTrack;
 
   // UI state
-  videoEnabled: boolean;
-  audioEnabled: boolean;
+  videoEnabled?: boolean;
+  audioEnabled?: boolean;
   isLocal: boolean;
 
   // Mediasoup references (later)

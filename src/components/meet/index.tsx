@@ -6,7 +6,7 @@ export default function Meet() {
   return (
     <main>
       <MeetHeader />
-      <VideoGrid />
+      <VideoGrid  />
       <MeetFooter />
     </main>
   );

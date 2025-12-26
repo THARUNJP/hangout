@@ -6,9 +6,12 @@ import {
   leaveSession,
 } from "../socket/session.socket";
 import { CallType } from "../lib/constant";
+import type { Participants } from "../types/types";
 
 export function useMeetingSocket(sessionCode: string, name: string) {
-  const [participants, setParticipants] = useState<any[]>([]);
+  const [participants, setParticipants] = useState<Participants[]>([
+    { scoketId: "", name, isLocal: true },
+  ]);
 
   useEffect(() => {
     if (!sessionCode || !name) return;
