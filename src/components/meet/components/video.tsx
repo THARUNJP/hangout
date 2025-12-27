@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getGridClass, getUserDevice, lsGetItem } from "../../../lib/helper";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMeetingSocket } from "../../../hooks/usemeeting";
+import { useMeetingSocket } from "../../../hooks/useSignalling";
 
 export default function VideoGrid() {
   const videoRef = useRef<HTMLVideoElement>(null);

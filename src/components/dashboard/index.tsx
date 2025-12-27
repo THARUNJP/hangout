@@ -1,9 +1,9 @@
 import { sessions } from "../../lib/constant";
-import { useBlockBrowserNavigation } from "../../hooks/usenavigationblock";
 import { useState } from "react";
 import NamePromptModal from "../propt-modal";
 import { lsGetItem, lsSetItem } from "../../lib/helper";
 import { useNavigate } from "react-router-dom";
+import { useBlockBrowserNavigation } from "../../hooks/usenavigationblock";
 
 function Dashboard() {
   const [showNamePrompt, setShowNamePrompt] = useState(false);

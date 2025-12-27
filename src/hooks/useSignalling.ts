@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { mediaSocket, socket } from "../socket";
+import { socket } from "../socket";
 import {
   createSession,
   joinSession,
@@ -18,10 +18,6 @@ export function useMeetingSocket(sessionCode: string, name: string) {
       socket.connect();
     }
 
-    if (!mediaSocket.connected) {
-      mediaSocket.connect();
-    }
-
     const onConnect = () => {
       console.log("signaling socket connected", socket.id);
       if (socket?.id) selfIdRef.current = socket.id;
@@ -34,10 +30,6 @@ export function useMeetingSocket(sessionCode: string, name: string) {
       ]);
       createSession(sessionCode, CallType.SFU);
       joinSession(sessionCode, name);
-    };
-
-    const onMediaConnect = () => {
-      console.log("media socket connected");
     };
 
     const onParticipantsUpdated = ({
@@ -59,7 +51,6 @@ export function useMeetingSocket(sessionCode: string, name: string) {
     };
 
     socket.on("connect", onConnect);
-    mediaSocket.on("connect", onMediaConnect);
     socket.on("participants-updated", onParticipantsUpdated);
 
     return () => {
@@ -69,11 +60,9 @@ export function useMeetingSocket(sessionCode: string, name: string) {
       // remove listeners
       socket.off("connect", onConnect);
       socket.off("participants-updated", onParticipantsUpdated);
-      mediaSocket.off("connect", onMediaConnect);
 
       // disconnect both sockets
       if (socket.connected) socket.disconnect();
-      if (mediaSocket.connected) mediaSocket.disconnect();
 
       console.log("all sockets disconnected");
     };
