@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { mediaSocket, socket } from "../socket";
 import {
   createSession,
@@ -9,10 +9,8 @@ import { CallType } from "../lib/constant";
 import type { Participants } from "../types/types";
 
 export function useMeetingSocket(sessionCode: string, name: string) {
-  const [participants, setParticipants] = useState<Participants[]>([
-    { scoketId: "", name, isLocal: true },
-  ]);
-
+  const [participants, setParticipants] = useState<Participants[]>([]);
+  const selfIdRef = useRef<string | null>(null);
   useEffect(() => {
     if (!sessionCode || !name) return;
 
@@ -25,7 +23,17 @@ export function useMeetingSocket(sessionCode: string, name: string) {
     }
 
     const onConnect = () => {
-      console.log("signaling socket connected");
+      console.log("signaling socket connected", socket.id);
+      if (socket?.id) selfIdRef.current = socket.id;
+      setParticipants([
+        {
+          socketId: socket.id!,
+          name,
+          isLocal: true,
+        },
+      ]);
+      createSession(sessionCode, CallType.SFU);
+      joinSession(sessionCode, name);
     };
 
     const onMediaConnect = () => {
@@ -36,19 +44,23 @@ export function useMeetingSocket(sessionCode: string, name: string) {
       participants,
       message,
     }: {
-      participants: any[];
+      participants: Participants[];
       message: string;
     }) => {
       console.log("participants update", participants);
-      setParticipants(participants);
+      const modifiedParticipants = participants.map((e) => {
+        if (e.socketId === selfIdRef.current) {
+          return { ...e, isLocal: true };
+        } else {
+          return e;
+        }
+      });
+      setParticipants(modifiedParticipants);
     };
 
     socket.on("connect", onConnect);
     mediaSocket.on("connect", onMediaConnect);
     socket.on("participants-updated", onParticipantsUpdated);
-
-    createSession(sessionCode, CallType.SFU);
-    joinSession(sessionCode, name);
 
     return () => {
       // IMPORTANT: tell server first

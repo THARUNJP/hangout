@@ -6,7 +6,7 @@ export type Participant = {
 };
 
 export type Participants = {
-  scoketId: string;                 // userId (stable)
+  socketId: string;                 // userId (stable)
   name?: string;              // optional for now
 
   // Media

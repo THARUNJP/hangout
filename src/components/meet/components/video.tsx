@@ -46,12 +46,12 @@ export default function VideoGrid() {
           place-items-center
         `}
       >
-        {participants.map((p, index) => (
+        {participants.map((p, _index) => (
           <div
-            key={p.scoketId}
+            key={p.socketId}
             className="w-full h-full bg-black rounded-lg flex items-center justify-center text-white"
           >
-            {index === 0 ? (
+            {p?.isLocal ? (
               <video
                 ref={videoRef}
                 className="w-full h-full object-cover"
