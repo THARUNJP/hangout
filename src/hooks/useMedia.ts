@@ -3,6 +3,7 @@ import { mediaSocket } from "../socket";
 
 export function useMedia(sessionCode: string, name: string) {
   useEffect(() => {
+    if (!sessionCode || !name) return;
     mediaSocket.connect();
 
     mediaSocket.on("connect", onConnect);
