@@ -30,7 +30,7 @@ export default function VideoGrid() {
   const { participants, sessionReady } = useMeetingSocket(code || "", name);
   useMedia(code || "", name, sessionReady);
 
-  console.log(participants, "?");
+  console.log(participants, "?",sessionReady);
 
   // Mock participants (UI only)
   // const participants: Participant[] = Array.from({ length: 5 }, (_, i) => ({

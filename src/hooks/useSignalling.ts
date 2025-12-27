@@ -58,7 +58,7 @@ export function useMeetingSocket(sessionCode: string, name: string) {
     return () => {
       // IMPORTANT: tell server first
       leaveSession(sessionCode);
-
+      setSessionReady(false);
       // remove listeners
       socket.off("connect", onConnect);
       socket.off("participants-updated", onParticipantsUpdated);
