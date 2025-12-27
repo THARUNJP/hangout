@@ -27,8 +27,8 @@ export default function VideoGrid() {
       stream?.getTracks().forEach((track) => track.stop());
     };
   }, []);
-  const { participants } = useMeetingSocket(code || "", name) || [];
-  useMedia(code || "", name);
+  const { participants, sessionReady } = useMeetingSocket(code || "", name);
+  useMedia(code || "", name, sessionReady);
 
   console.log(participants, "?");
 

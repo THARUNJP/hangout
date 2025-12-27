@@ -10,6 +10,7 @@ import type { Participants } from "../types/types";
 
 export function useMeetingSocket(sessionCode: string, name: string) {
   const [participants, setParticipants] = useState<Participants[]>([]);
+  const [sessionReady, setSessionReady] = useState(false);
   const selfIdRef = useRef<string | null>(null);
   useEffect(() => {
     if (!sessionCode || !name) return;
@@ -30,6 +31,7 @@ export function useMeetingSocket(sessionCode: string, name: string) {
       ]);
       createSession(sessionCode, CallType.SFU);
       joinSession(sessionCode, name);
+      setSessionReady(true);
     };
 
     const onParticipantsUpdated = ({
@@ -68,5 +70,5 @@ export function useMeetingSocket(sessionCode: string, name: string) {
     };
   }, [sessionCode, name]);
 
-  return { participants };
+  return { participants, sessionReady };
 }
