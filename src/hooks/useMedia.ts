@@ -28,6 +28,12 @@ export function useMedia(
       mediaSocket.emit("join-media", { sessionCode }, (joinRes: any) => {
         if (!joinRes?.status) return;
 
+    console.log(joinRes.producers,"///existing producer");
+    
+         mediaSocket.on("new-producer", ({ producerId, kind }) => {
+            console.log(producerId, kind,"///new producer created");
+          });
+
         mediaSocket.emit("get-rtp-capabilities", async (rtpRes: any) => {
           if (!rtpRes?.status) return;
 
@@ -137,7 +143,6 @@ export function useMedia(
               }
             );
           });
-          
         });
       });
     };
