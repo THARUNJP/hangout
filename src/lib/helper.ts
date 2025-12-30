@@ -1,3 +1,4 @@
+
 export function getGridClass(count: number) {
   switch (true) {
     case count === 1:

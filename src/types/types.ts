@@ -6,6 +6,7 @@ export type Participant = {
 };
 
 export type Participants = {
+  userId:string;
   socketId: string;                 // userId (stable)
   name?: string;              // optional for now
 

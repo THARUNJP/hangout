@@ -3,6 +3,7 @@ import { getGridClass, getUserDevice, lsGetItem } from "../../../lib/helper";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMeetingSocket } from "../../../hooks/useSignalling";
 import { useMedia } from "../../../hooks/useMedia";
+import { ParticipantTile } from "./tile";
 
 export default function VideoGrid() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -27,16 +28,8 @@ export default function VideoGrid() {
       stream?.getTracks().forEach((track) => track.stop());
     };
   }, []);
-  const { participants, sessionReady } = useMeetingSocket(code || "", name);
-  useMedia(code || "", name, sessionReady);
-
-  console.log(participants, "?",sessionReady);
-
-  // Mock participants (UI only)
-  // const participants: Participant[] = Array.from({ length: 5 }, (_, i) => ({
-  //   id: String(i),
-  //   name: `User ${i + 1}`,
-  // }));
+  const { participants, sessionReady,updateParticipantStream } = useMeetingSocket(code || "", name);
+  useMedia(code || "", name, sessionReady,updateParticipantStream);
 
   return (
     <div className="flex-1 p-4 h-[calc(100vh-(4rem+3.5rem))]">
@@ -61,7 +54,7 @@ export default function VideoGrid() {
                 playsInline
               />
             ) : (
-              <span>{p.name}</span>
+              <ParticipantTile key={p.socketId} participant={p} />
             )}
           </div>
         ))}

@@ -7,11 +7,19 @@ import {
 } from "../socket/session.socket";
 import { CallType } from "../lib/constant";
 import type { Participants } from "../types/types";
+import { lsGetItem } from "../lib/helper";
 
 export function useMeetingSocket(sessionCode: string, name: string) {
   const [participants, setParticipants] = useState<Participants[]>([]);
   const [sessionReady, setSessionReady] = useState(false);
   const selfIdRef = useRef<string | null>(null);
+
+  const updateParticipantStream = (socketId: string, stream: MediaStream) => {
+    setParticipants((prev) =>
+      prev.map((p) => (p.mediaId === socketId ? { ...p, stream } : p))
+    );
+  };
+
   useEffect(() => {
     if (!sessionCode || !name) return;
 
@@ -22,8 +30,11 @@ export function useMeetingSocket(sessionCode: string, name: string) {
     const onConnect = () => {
       console.log("signaling socket connected", socket.id);
       if (socket?.id) selfIdRef.current = socket.id;
+      const userId = lsGetItem("userId");
+      if (!userId) return; // nav to dash
       setParticipants([
         {
+          userId: userId,
           socketId: socket.id!,
           name,
           isLocal: true,
@@ -70,5 +81,5 @@ export function useMeetingSocket(sessionCode: string, name: string) {
     };
   }, [sessionCode, name]);
 
-  return { participants, sessionReady };
+  return { participants, sessionReady, updateParticipantStream };
 }
