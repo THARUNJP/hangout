@@ -1,13 +1,16 @@
 import { socket } from ".";
+import { lsSetItem } from "../lib/helper";
 import type { CallType } from "../types/types";
+import { v4 as uuidv4 } from "uuid";
 
 export function createSession(sessionCode: string, callType: CallType) {
   socket.emit("create-session", { sessionCode, callType });
 }
 
 export function joinSession(sessionCode: string, participantName: string) {
-    console.log("....calls");
-  socket.emit("join-session", { sessionCode, participantName });
+  const userId = uuidv4();
+  lsSetItem("userId", userId);
+  socket.emit("join-session", { sessionCode, participantName, userId });
 }
 
 export function leaveSession(sessionCode: string) {
