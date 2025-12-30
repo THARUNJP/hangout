@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { mediaSocket } from "../socket";
 import { Device } from "mediasoup-client";
 import type { Transport } from "mediasoup-client/types";
-import { getUserDevice } from "../lib/helper";
+import { getUserDevice, lsGetItem } from "../lib/helper";
 
 export function useMedia(
   sessionCode: string,
@@ -24,9 +24,11 @@ export function useMedia(
         deviceRef.current = new Device();
       }
       const device = deviceRef.current;
+      const userId = lsGetItem("userId")
+      if(!userId) return // nav to dash later
 
       // Join media session
-      mediaSocket.emit("join-media", { sessionCode }, async (joinRes: any) => {
+      mediaSocket.emit("join-media", { sessionCode, userId }, async (joinRes: any) => {
         if (!joinRes?.status) return;
 
         console.log(joinRes.producers, "///existing producers");

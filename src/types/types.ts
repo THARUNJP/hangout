@@ -10,6 +10,7 @@ export type Participants = {
   name?: string;              // optional for now
 
   // Media
+  mediaId?:string;
   stream?: MediaStream;       // combined audio + video (for <video>)
   videoTrack?: MediaStreamTrack;
   audioTrack?: MediaStreamTrack;
