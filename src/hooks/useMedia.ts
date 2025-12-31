@@ -35,22 +35,13 @@ export function useMedia(
         async (joinRes: any) => {
           if (!joinRes?.status) return;
 
-          console.log(joinRes.producers, "///existing producers");
-
-          // ---- Handle existing producers ----
-          for (const producer of joinRes.producers) {
-            await consumeProducer(
-              producer.producerId,
-              producer.kind,
-              producer.socketId
-            );
-          }
+     
 
           // ---- Listen for new producers ----
           mediaSocket.on(
             "new-producer",
-            async ({ producerId, kind, socketId }) => {
-              await consumeProducer(producerId, kind, socketId);
+            async ({ producerId, kind, userId }) => {
+              await consumeProducer(producerId, kind, userId);
             }
           );
 
@@ -120,7 +111,7 @@ export function useMedia(
             );
 
             // ---- Create recv transport ----
-            mediaSocket.emit("create-recv-transport", (res: any) => {
+            mediaSocket.emit("create-recv-transport",async(res: any) => {
               if (!res?.status) return;
 
               const recvTransport = device.createRecvTransport({
@@ -144,6 +135,15 @@ export function useMedia(
                   );
                 }
               );
+              
+               // ---- Handle existing producers ----
+          for (const producer of joinRes.producers) {
+            await consumeProducer(
+              producer.producerId,
+              producer.kind,
+              producer.userId
+            );
+          }
             });
           });
         }
@@ -154,8 +154,10 @@ export function useMedia(
     async function consumeProducer(
       producerId: string,
       _kind: string,
-      socketId: string
+      userId: string
     ) {
+      console.log(deviceRef.current,recvTransportRef.current,"current");
+      
       if (!deviceRef.current || !recvTransportRef.current) return;
       const device = deviceRef.current;
       const recvTransport = recvTransportRef.current;
@@ -181,8 +183,7 @@ export function useMedia(
             rtpParameters: consumerRes.rtpParameters,
           });
 
-updateParticipantStream(socketId,consumer.track)
-
+          updateParticipantStream(userId, consumer.track);
 
           // const mediaStream = new MediaStream();
           // mediaStream.addTrack(consumer.track);

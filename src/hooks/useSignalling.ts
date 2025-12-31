@@ -15,12 +15,14 @@ export function useMeetingSocket(sessionCode: string, name: string) {
   const selfIdRef = useRef<string | null>(null);
 
   const updateParticipantStream = (
-    socketId: string,
+    userId: string,
     track: MediaStreamTrack
   ) => {
     setParticipants((prev) =>
       prev.map((p) => {
-        if (p.mediaId !== socketId) return p;
+        console.log("update call",p,userId);
+        
+        if (p.userId !== userId) return p;
 
         const stream = p.stream ?? new MediaStream();
 
@@ -45,6 +47,8 @@ export function useMeetingSocket(sessionCode: string, name: string) {
       console.log("signaling socket connected", socket.id);
       if (socket?.id) selfIdRef.current = socket.id;
       const userId = lsGetItem("userId");
+      createSession(sessionCode, CallType.SFU);
+      joinSession(sessionCode, name);
       if (!userId) return; // nav to dash
       setParticipants([
         {
@@ -54,8 +58,6 @@ export function useMeetingSocket(sessionCode: string, name: string) {
           isLocal: true,
         },
       ]);
-      createSession(sessionCode, CallType.SFU);
-      joinSession(sessionCode, name);
       setSessionReady(true);
     };
 

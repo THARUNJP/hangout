@@ -29,6 +29,8 @@ export default function VideoGrid() {
     };
   }, []);
   const { participants, sessionReady,updateParticipantStream } = useMeetingSocket(code || "", name);
+  console.log("part up",participants);
+  
   useMedia(code || "", name, sessionReady,updateParticipantStream);
 
   return (
