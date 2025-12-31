@@ -14,19 +14,17 @@ export function useMeetingSocket(sessionCode: string, name: string) {
   const [sessionReady, setSessionReady] = useState(false);
   const selfIdRef = useRef<string | null>(null);
 
-  const updateParticipantStream = (
-    userId: string,
-    track: MediaStreamTrack
-  ) => {
+  const updateParticipantStream = (userId: string, track: MediaStreamTrack) => {
+    console.log("update call",track);
+    
     setParticipants((prev) =>
       prev.map((p) => {
-        console.log("update call",p,userId);
-        
         if (p.userId !== userId) return p;
 
+        // Reuse existing stream or create a new one
         const stream = p.stream ?? new MediaStream();
 
-        // avoid duplicate tracks
+        // Avoid duplicate tracks
         if (!stream.getTracks().some((t) => t.id === track.id)) {
           stream.addTrack(track);
         }
@@ -35,7 +33,6 @@ export function useMeetingSocket(sessionCode: string, name: string) {
       })
     );
   };
-
   useEffect(() => {
     if (!sessionCode || !name) return;
 
@@ -62,21 +59,21 @@ export function useMeetingSocket(sessionCode: string, name: string) {
     };
 
     const onParticipantsUpdated = ({
-      participants,
-      message,
+      participants: incoming,
     }: {
       participants: Participants[];
-      message: string;
     }) => {
-      console.log("participants update", participants);
-      const modifiedParticipants = participants.map((e) => {
-        if (e.socketId === selfIdRef.current) {
-          return { ...e, isLocal: true };
-        } else {
-          return e;
-        }
-      });
-      setParticipants(modifiedParticipants);
+      setParticipants((prev) =>
+        incoming.map((p) => {
+          const existing = prev.find((x) => x.userId === p.userId);
+
+          return {
+            ...p,
+            isLocal: p.socketId === selfIdRef.current,
+            stream: existing?.stream,
+          };
+        })
+      );
     };
 
     socket.on("connect", onConnect);

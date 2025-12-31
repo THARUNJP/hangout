@@ -9,8 +9,18 @@ export function ParticipantTile({
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
+
+    console.log(
+  participant.stream?.getVideoTracks(),"video tracks"
+);
+     console.log(participant.stream?.getAudioTracks(),"audio tracks");
+    
     if (videoRef.current && participant.stream) {
       videoRef.current.srcObject = participant.stream;
+
+      videoRef.current.onloadedmetadata = () => {
+        videoRef.current?.play().catch(console.error);
+      };
     }
   }, [participant.stream]);
 
