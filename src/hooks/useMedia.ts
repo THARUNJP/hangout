@@ -129,21 +129,24 @@ export function useMedia(
                     mediaSocket.emit(
                       "connect-transport",
                       { dtlsParameters, transportType: "recv" },
-                      (res: any) =>
-                        res?.status
+                      (res: any) =>{
+                         res?.status
                           ? callback()
                           : errback(new Error("DTLS failed"))
+                      }
                     );
                   }
                 );
 
                 // ---- Handle existing producers ----
-                for (const producer of joinRes.producers) {
-                  await consumeProducer(
-                    producer.producerId,
-                    producer.kind,
-                    producer.userId
-                  );
+                if (joinRes?.producers?.length > 0) {
+                  for (const producer of joinRes.producers) {
+                    await consumeProducer(
+                      producer.producerId,
+                      producer.kind,
+                      producer.userId
+                    );
+                  }
                 }
               });
             }
@@ -179,13 +182,11 @@ export function useMedia(
             kind: consumerRes.kind,
             rtpParameters: consumerRes.rtpParameters,
           });
-         // Resume consumer
+          // Resume consumer
           mediaSocket.emit("resume-consumer", {
             consumerId: consumerRes.id,
           });
           updateParticipantStream(userId, consumer.track);
-
-       
         }
       );
     }
