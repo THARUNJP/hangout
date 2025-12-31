@@ -8,7 +8,7 @@ export function useMedia(
   sessionCode: string,
   name: string,
   sessionReady: boolean,
-  updateParticipantStream: (socketId: string, stream: MediaStream) => void
+  updateParticipantStream: (socketId: string, stream: MediaStreamTrack) => void
 ) {
   const deviceRef = useRef<Device | null>(null);
   const sendTransportRef = useRef<Transport | null>(null);
@@ -181,8 +181,11 @@ export function useMedia(
             rtpParameters: consumerRes.rtpParameters,
           });
 
-          const mediaStream = new MediaStream();
-          mediaStream.addTrack(consumer.track);
+updateParticipantStream(socketId,consumer.track)
+
+
+          // const mediaStream = new MediaStream();
+          // mediaStream.addTrack(consumer.track);
 
           // const el = document.createElement(
           //   consumer.kind === "video" ? "video" : "audio"

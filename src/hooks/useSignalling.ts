@@ -14,9 +14,23 @@ export function useMeetingSocket(sessionCode: string, name: string) {
   const [sessionReady, setSessionReady] = useState(false);
   const selfIdRef = useRef<string | null>(null);
 
-  const updateParticipantStream = (socketId: string, stream: MediaStream) => {
+  const updateParticipantStream = (
+    socketId: string,
+    track: MediaStreamTrack
+  ) => {
     setParticipants((prev) =>
-      prev.map((p) => (p.mediaId === socketId ? { ...p, stream } : p))
+      prev.map((p) => {
+        if (p.mediaId !== socketId) return p;
+
+        const stream = p.stream ?? new MediaStream();
+
+        // avoid duplicate tracks
+        if (!stream.getTracks().some((t) => t.id === track.id)) {
+          stream.addTrack(track);
+        }
+
+        return { ...p, stream };
+      })
     );
   };
 
