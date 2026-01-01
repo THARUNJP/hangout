@@ -3,7 +3,7 @@ import { useState } from "react";
 import NamePromptModal from "../propt-modal";
 import { lsGetItem, lsSetItem } from "../../lib/helper";
 import { useNavigate } from "react-router-dom";
-import { useBlockBrowserNavigation } from "../../hooks/useNavigationBlock";
+// import { useBlockBrowserNavigation } from "../../hooks/useNavigationBlock";
 
 function Dashboard() {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
@@ -11,7 +11,7 @@ function Dashboard() {
     null
   );
 
-  useBlockBrowserNavigation();
+  // useBlockBrowserNavigation();
   const navigate = useNavigate();
 
   const handleJoinClick = (sessionCode: string) => {
