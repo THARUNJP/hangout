@@ -15,19 +15,17 @@ export function useMeetingSocket(sessionCode: string, name: string) {
   const selfIdRef = useRef<string | null>(null);
 
   const updateParticipantStream = (userId: string, track: MediaStreamTrack) => {
-    console.log("update call", track);
-
     setParticipants((prev) =>
       prev.map((p) => {
         if (p.userId !== userId) return p;
 
-        // Reuse existing stream or create a new one
-        const stream = new MediaStream([
-          ...(p.stream?.getTracks() ?? []),
-          track,
-        ]);
+        // Use existing stream if possible
+        let stream = p.stream;
+        if (!stream) {
+          stream = new MediaStream();
+        }
 
-        // Avoid duplicate tracks
+        // Add track if not already added
         if (!stream.getTracks().some((t) => t.id === track.id)) {
           stream.addTrack(track);
         }

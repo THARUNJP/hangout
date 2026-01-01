@@ -13,35 +13,52 @@ export function useMedia(
   const deviceRef = useRef<Device | null>(null);
   const sendTransportRef = useRef<Transport | null>(null);
   const recvTransportRef = useRef<Transport | null>(null);
+ 
+  const pendingProducersRef = useRef<
+    { producerId: string; kind: string; userId: string }[]
+  >([]);
 
   useEffect(() => {
     if (!sessionCode || !name || !sessionReady) return;
     mediaSocket.connect();
     const onConnect = () => {
-      console.log("media socket connected", mediaSocket.id);
-
-      // Create Device only once
       if (!deviceRef.current) {
         deviceRef.current = new Device();
       }
+
       const device = deviceRef.current;
       const userId = lsGetItem("userId");
-      if (!userId) return; // nav to dash later
+      if (!userId) return;
 
-      // Join media session
+      const tryConsumePending = async () => {
+        if (!recvTransportRef.current || !deviceRef.current) {
+          return;
+        }
+
+        if (pendingProducersRef.current.length === 0) {
+          return;
+        }
+
+        const list = [...pendingProducersRef.current];
+        pendingProducersRef.current = [];
+
+        for (const p of list) {
+          await consumeProducer(p.producerId, p.kind, p.userId);
+        }
+      };
+
+      // ---- Listen for new producers (BUFFER ONLY) ----
+      mediaSocket.on("new-producer", ({ producerId, kind, userId }) => {
+        pendingProducersRef.current.push({ producerId, kind, userId });
+        tryConsumePending();
+      });
+
+      // ---- Join media session ----
       mediaSocket.emit(
         "join-media",
         { sessionCode, userId },
         async (joinRes: any) => {
           if (!joinRes?.status) return;
-
-          // ---- Listen for new producers ----
-          mediaSocket.on(
-            "new-producer",
-            async ({ producerId, kind, userId }) => {
-              await consumeProducer(producerId, kind, userId);
-            }
-          );
 
           // ---- Get router RTP capabilities ----
           mediaSocket.emit("get-rtp-capabilities", async (rtpRes: any) => {
@@ -50,7 +67,6 @@ export function useMedia(
             if (!device.loaded) {
               await device.load({ routerRtpCapabilities: rtpRes.data });
             }
-            console.log("device loaded:", device.loaded);
 
             // ---- Create send transport ----
             if (!sendTransportRef.current) {
@@ -59,36 +75,37 @@ export function useMedia(
                 async (transportRes: any) => {
                   if (!transportRes?.status) return;
 
-                  const sendTransport = device.createSendTransport({
-                    id: transportRes.id,
-                    iceParameters: transportRes.iceParameters,
-                    iceCandidates: transportRes.iceCandidates,
-                    dtlsParameters: transportRes.dtlsParameters,
-                  });
+                  const sendTransport =
+                    device.createSendTransport(transportRes);
                   sendTransportRef.current = sendTransport;
 
-                  // DTLS handshake
                   sendTransport.on(
                     "connect",
                     ({ dtlsParameters }, callback, errback) => {
                       mediaSocket.emit(
                         "connect-transport",
                         { dtlsParameters, transportType: "send" },
-                        (res: any) =>
-                          res?.status
-                            ? callback()
-                            : errback(new Error("DTLS failed"))
+                        (res: any) => {
+                          if (res?.status) {
+                            callback();
+                          } else {
+                            errback(new Error("DTLS failed"));
+                          }
+                        }
                       );
                     }
                   );
 
-                  // Producer signaling
                   sendTransport.on(
                     "produce",
                     ({ kind, rtpParameters }, callback, errback) => {
                       mediaSocket.emit(
                         "produce",
-                        { transportId: sendTransport.id, kind, rtpParameters },
+                        {
+                          transportId: sendTransport.id,
+                          kind,
+                          rtpParameters,
+                        },
                         (res: any) =>
                           res?.id
                             ? callback({ id: res.id })
@@ -97,12 +114,13 @@ export function useMedia(
                     }
                   );
 
-                  // Get local media and produce tracks
                   const stream = await getUserDevice();
                   if (!stream) return;
+
                   const audioTrack = stream.getAudioTracks()[0];
                   if (audioTrack)
                     await sendTransport.produce({ track: audioTrack });
+
                   const videoTrack = stream.getVideoTracks()[0];
                   if (videoTrack)
                     await sendTransport.produce({ track: videoTrack });
@@ -115,12 +133,7 @@ export function useMedia(
               mediaSocket.emit("create-recv-transport", async (res: any) => {
                 if (!res?.status) return;
 
-                const recvTransport = device.createRecvTransport({
-                  id: res.id,
-                  iceParameters: res.iceParameters,
-                  iceCandidates: res.iceCandidates,
-                  dtlsParameters: res.dtlsParameters,
-                });
+                const recvTransport = device.createRecvTransport(res);
                 recvTransportRef.current = recvTransport;
 
                 recvTransport.on(
@@ -129,25 +142,24 @@ export function useMedia(
                     mediaSocket.emit(
                       "connect-transport",
                       { dtlsParameters, transportType: "recv" },
-                      (res: any) =>{
-                         res?.status
-                          ? callback()
-                          : errback(new Error("DTLS failed"))
+                      (res: any) => {
+                        if (res?.status) {
+                          callback();
+                          tryConsumePending();
+                        } else {
+                          errback(new Error("DTLS failed"));
+                        }
                       }
                     );
                   }
                 );
 
-                // ---- Handle existing producers ----
-                if (joinRes?.producers?.length > 0) {
-                  for (const producer of joinRes.producers) {
-                    await consumeProducer(
-                      producer.producerId,
-                      producer.kind,
-                      producer.userId
-                    );
-                  }
+                // ---- Buffer existing producers ----
+                if (joinRes?.producers?.length) {
+                  pendingProducersRef.current.push(...joinRes.producers);
                 }
+
+                tryConsumePending();
               });
             }
           });
@@ -161,9 +173,9 @@ export function useMedia(
       _kind: string,
       userId: string
     ) {
-      console.log(deviceRef.current, recvTransportRef.current, "current");
-
-      if (!deviceRef.current || !recvTransportRef.current) return;
+      if (!deviceRef.current || !recvTransportRef.current) {
+        return;
+      }
       const device = deviceRef.current;
       const recvTransport = recvTransportRef.current;
 
@@ -173,19 +185,20 @@ export function useMedia(
         async (consumerRes: any) => {
           if (!consumerRes?.status) return;
 
-          console.log("Consumer created:", consumerRes);
-
-          // Attach track to media element
+          // Create consumer (still paused on server)
           const consumer = await recvTransport.consume({
             id: consumerRes.id,
             producerId: consumerRes.producerId,
             kind: consumerRes.kind,
             rtpParameters: consumerRes.rtpParameters,
           });
-          // Resume consumer
+
+           // Now ACK server that client is ready
           mediaSocket.emit("resume-consumer", {
-            consumerId: consumerRes.id,
+            consumerId: consumer.id,
           });
+
+          // Attach track to MediaStream / UI FIRST
           updateParticipantStream(userId, consumer.track);
         }
       );
