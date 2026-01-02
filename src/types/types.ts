@@ -1,10 +1,5 @@
 import type { CallType } from "../lib/constant";
 
-export type Participant = {
-  id: string;
-  name: string;
-};
-
 export type Participants = {
   userId:string;
   socketId: string;                 // userId (stable)
