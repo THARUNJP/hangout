@@ -9,11 +9,13 @@ import { CallType } from "../lib/constant";
 import type { Participants } from "../types/types";
 import { lsGetItem } from "../lib/helper";
 import { useParticipantsStore } from "../store";
+import { UseSessionStore } from "../store/session.store";
 
 export function useMeetingSocket(sessionCode: string, name: string) {
   const setParticipants = useParticipantsStore((s) => s.setParticipants);
   const updateParticipant = useParticipantsStore((s) => s.updateParticipant);
-  const [sessionReady, setSessionReady] = useState(false);
+  const setSessionReady = UseSessionStore((state) => state.setSessionReady);
+
   const selfIdRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -65,6 +67,4 @@ export function useMeetingSocket(sessionCode: string, name: string) {
       console.log("all sockets disconnected");
     };
   }, [sessionCode, name]);
-
-  return { sessionReady };
 }

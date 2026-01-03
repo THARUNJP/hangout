@@ -1,21 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import { getGridClass, getUserDevice, lsGetItem } from "../../../lib/helper";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { useMeetingSocket } from "../../../hooks/useSignalling";
 import { useMedia } from "../../../hooks/useMedia";
 import { ParticipantTile } from "./tile";
 import { useParticipantsStore } from "../../../store";
+import { UseSessionStore } from "../../../store/session.store";
 
 export default function VideoGrid() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const { code } = useParams<{ code: string }>();
-  const navigate = useNavigate();
   const name: string = lsGetItem("name") || "unknown";
   const participants = useParticipantsStore((state) => state.participants);
-  // aslo later need to check the sessioncode is valid and navigate if not
+  const sessionReady = UseSessionStore((state) => state.sessionReady);
+
+
   useEffect(() => {
-    if (!code) navigate("/");
     async function fetchUserMedia() {
       const stream = await getUserDevice();
       if (stream && videoRef.current) {
@@ -30,9 +31,8 @@ export default function VideoGrid() {
       stream?.getTracks().forEach((track) => track.stop());
     };
   }, []);
-
-  const { sessionReady } = useMeetingSocket(code || "", name);
-  useMedia(code || "", name, sessionReady);
+  useMeetingSocket(code!, name);
+  useMedia(code!, name, sessionReady);
 
   return (
     <div className="flex-1 p-4 h-[calc(100vh-(4rem+3.5rem))]">
