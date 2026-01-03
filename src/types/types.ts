@@ -21,3 +21,17 @@ export type Participants = {
   audioProducerId?: string;
 };
 export type CallType =(typeof CallType)[keyof typeof CallType];
+
+export interface ParticipantsState {
+  participants: Participants[];
+  setParticipants: (participants: Participants[]) => void;
+  addParticipant: (participant: Participants) => void;
+  removeParticipant: (userId: string) => void;
+  updateParticipant: (participants: Participants[], selfIdRef: string) => void;
+  updateParticipantStream: (userId: string, track: MediaStreamTrack) => void;
+}
+
+export interface SessionState {
+  sessionReady:boolean;
+  setSessionReady:(isReady:boolean)=>void;
+}

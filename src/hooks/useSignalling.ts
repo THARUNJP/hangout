@@ -11,10 +11,8 @@ import { lsGetItem } from "../lib/helper";
 import { useParticipantsStore } from "../store";
 
 export function useMeetingSocket(sessionCode: string, name: string) {
-  // const [participants, setParticipants] = useState<Participants[]>([]);
- const participants = useParticipantsStore((s) => s.participants);
-const setParticipants = useParticipantsStore((s) => s.setParticipants);
-const updateParticipant = useParticipantsStore((s) => s.updateParticipant);
+  const setParticipants = useParticipantsStore((s) => s.setParticipants);
+  const updateParticipant = useParticipantsStore((s) => s.updateParticipant);
   const [sessionReady, setSessionReady] = useState(false);
   const selfIdRef = useRef<string | null>(null);
 
@@ -37,8 +35,8 @@ const updateParticipant = useParticipantsStore((s) => s.updateParticipant);
         socketId: socket.id!,
         name,
         isLocal: true,
-      } ;
-    setParticipants([intialData])
+      };
+      setParticipants([intialData]);
       setSessionReady(true);
     };
 
@@ -68,5 +66,5 @@ const updateParticipant = useParticipantsStore((s) => s.updateParticipant);
     };
   }, [sessionCode, name]);
 
-  return { participants, sessionReady};
+  return { sessionReady };
 }

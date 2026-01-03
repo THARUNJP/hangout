@@ -1,14 +1,6 @@
 import { create } from "zustand";
-import type { Participants } from "../types/types";
+import type { Participants, ParticipantsState } from "../types/types";
 
-interface ParticipantsState {
-  participants: Participants[];
-  setParticipants: (participants: Participants[]) => void;
-  addParticipant: (participant: Participants) => void;
-  removeParticipant: (userId: string) => void;
-  updateParticipant: (participants: Participants[], selfIdRef: string) => void;
-  updateParticipantStream: (userId: string, track: MediaStreamTrack) => void;
-}
 
 export const useParticipantsStore = create<ParticipantsState>((set) => ({
   participants: [],
@@ -56,3 +48,4 @@ export const useParticipantsStore = create<ParticipantsState>((set) => ({
       }),
     })),
 }));
+

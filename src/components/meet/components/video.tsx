@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useMeetingSocket } from "../../../hooks/useSignalling";
 import { useMedia } from "../../../hooks/useMedia";
 import { ParticipantTile } from "./tile";
+import { useParticipantsStore } from "../../../store";
 
 export default function VideoGrid() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -11,6 +12,7 @@ export default function VideoGrid() {
   const { code } = useParams<{ code: string }>();
   const navigate = useNavigate();
   const name: string = lsGetItem("name") || "unknown";
+  const participants = useParticipantsStore((state) => state.participants);
   // aslo later need to check the sessioncode is valid and navigate if not
   useEffect(() => {
     if (!code) navigate("/");
@@ -28,7 +30,8 @@ export default function VideoGrid() {
       stream?.getTracks().forEach((track) => track.stop());
     };
   }, []);
-  const { participants, sessionReady } = useMeetingSocket(code || "", name);
+
+  const { sessionReady } = useMeetingSocket(code || "", name);
   useMedia(code || "", name, sessionReady);
 
   return (
