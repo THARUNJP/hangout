@@ -3,17 +3,20 @@ import { mediaSocket } from "../socket";
 import { Device } from "mediasoup-client";
 import type { Transport } from "mediasoup-client/types";
 import { getUserDevice, lsGetItem } from "../lib/helper";
+import { useParticipantsStore } from "../store";
 
 export function useMedia(
   sessionCode: string,
   name: string,
-  sessionReady: boolean,
-  updateParticipantStream: (socketId: string, stream: MediaStreamTrack) => void
+  sessionReady: boolean
 ) {
   const deviceRef = useRef<Device | null>(null);
   const sendTransportRef = useRef<Transport | null>(null);
   const recvTransportRef = useRef<Transport | null>(null);
- 
+  const updateParticipantStream = useParticipantsStore(
+    (state) => state.updateParticipantStream
+  );
+
   const pendingProducersRef = useRef<
     { producerId: string; kind: string; userId: string }[]
   >([]);
@@ -193,7 +196,7 @@ export function useMedia(
             rtpParameters: consumerRes.rtpParameters,
           });
 
-           // Now ACK server that client is ready
+          // Now ACK server that client is ready
           mediaSocket.emit("resume-consumer", {
             consumerId: consumer.id,
           });

@@ -28,10 +28,8 @@ export default function VideoGrid() {
       stream?.getTracks().forEach((track) => track.stop());
     };
   }, []);
-  const { participants, sessionReady,updateParticipantStream } = useMeetingSocket(code || "", name);
-  console.log("part up",participants);
-  
-  useMedia(code || "", name, sessionReady,updateParticipantStream);
+  const { participants, sessionReady } = useMeetingSocket(code || "", name);
+  useMedia(code || "", name, sessionReady);
 
   return (
     <div className="flex-1 p-4 h-[calc(100vh-(4rem+3.5rem))]">

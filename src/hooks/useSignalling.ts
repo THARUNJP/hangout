@@ -8,32 +8,16 @@ import {
 import { CallType } from "../lib/constant";
 import type { Participants } from "../types/types";
 import { lsGetItem } from "../lib/helper";
+import { useParticipantsStore } from "../store";
 
 export function useMeetingSocket(sessionCode: string, name: string) {
-  const [participants, setParticipants] = useState<Participants[]>([]);
+  // const [participants, setParticipants] = useState<Participants[]>([]);
+ const participants = useParticipantsStore((s) => s.participants);
+const setParticipants = useParticipantsStore((s) => s.setParticipants);
+const updateParticipant = useParticipantsStore((s) => s.updateParticipant);
   const [sessionReady, setSessionReady] = useState(false);
   const selfIdRef = useRef<string | null>(null);
 
-  const updateParticipantStream = (userId: string, track: MediaStreamTrack) => {
-    setParticipants((prev) =>
-      prev.map((p) => {
-        if (p.userId !== userId) return p;
-
-        // Use existing stream if possible
-        let stream = p.stream;
-        if (!stream) {
-          stream = new MediaStream();
-        }
-
-        // Add track if not already added
-        if (!stream.getTracks().some((t) => t.id === track.id)) {
-          stream.addTrack(track);
-        }
-
-        return { ...p, stream };
-      })
-    );
-  };
   useEffect(() => {
     if (!sessionCode || !name) return;
 
@@ -48,14 +32,13 @@ export function useMeetingSocket(sessionCode: string, name: string) {
       createSession(sessionCode, CallType.SFU);
       joinSession(sessionCode, name);
       if (!userId) return; // nav to dash
-      setParticipants([
-        {
-          userId: userId,
-          socketId: socket.id!,
-          name,
-          isLocal: true,
-        },
-      ]);
+      const intialData = {
+        userId: userId,
+        socketId: socket.id!,
+        name,
+        isLocal: true,
+      } ;
+    setParticipants([intialData])
       setSessionReady(true);
     };
 
@@ -64,17 +47,7 @@ export function useMeetingSocket(sessionCode: string, name: string) {
     }: {
       participants: Participants[];
     }) => {
-      setParticipants((prev) =>
-        incoming.map((p) => {
-          const existing = prev.find((x) => x.userId === p.userId);
-
-          return {
-            ...p,
-            isLocal: p.socketId === selfIdRef.current,
-            stream: existing?.stream,
-          };
-        })
-      );
+      if (selfIdRef.current) updateParticipant(incoming, selfIdRef.current);
     };
 
     socket.on("connect", onConnect);
@@ -95,5 +68,5 @@ export function useMeetingSocket(sessionCode: string, name: string) {
     };
   }, [sessionCode, name]);
 
-  return { participants, sessionReady, updateParticipantStream };
+  return { participants, sessionReady};
 }
