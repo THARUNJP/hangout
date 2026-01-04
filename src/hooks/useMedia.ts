@@ -4,18 +4,16 @@ import { Device } from "mediasoup-client";
 import type { Transport } from "mediasoup-client/types";
 import { getUserDevice, lsGetItem } from "../lib/helper";
 import { useParticipantsStore } from "../store";
+import { UseSessionStore } from "../store/session.store";
 
-export function useMedia(
-  sessionCode: string,
-  name: string,
-  sessionReady: boolean
-) {
+export function useMedia(sessionCode: string, name: string) {
   const deviceRef = useRef<Device | null>(null);
   const sendTransportRef = useRef<Transport | null>(null);
   const recvTransportRef = useRef<Transport | null>(null);
   const updateParticipantStream = useParticipantsStore(
     (state) => state.updateParticipantStream
   );
+  const sessionReady = UseSessionStore((state) => state.sessionReady);
 
   const pendingProducersRef = useRef<
     { producerId: string; kind: string; userId: string }[]
