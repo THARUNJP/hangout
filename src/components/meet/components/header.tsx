@@ -1,6 +1,8 @@
+import { useParams } from "react-router-dom";
 import { useParticipantsStore } from "../../../store";
 
 export default function MeetHeader() {
+  const { code } = useParams<{ code: string }>();
   const participantCount = useParticipantsStore(
     (state) => state.participants.length
   ); // later try to add helper
@@ -11,7 +13,7 @@ export default function MeetHeader() {
         <span className="text-sm font-medium text-gray-800">
           Team Sync Meeting
         </span>
-        <span className="text-xs text-gray-500">Session: abc-defg-hij</span>
+        <span className="text-xs text-gray-500">Session: {code}</span>
       </div>
 
       {/* Center: Connection Status */}
@@ -20,7 +22,7 @@ export default function MeetHeader() {
       {/* Right: Participants */}
       <div className="text-sm text-gray-600">
         Participants:{" "}
-        <span className="font-medium">${participantCount} / 10</span>
+        <span className="font-medium">{participantCount} / 10</span>
       </div>
     </header>
   );
