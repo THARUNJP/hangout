@@ -1,3 +1,4 @@
+import { Camera, Mic } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function MeetFooter() {
@@ -6,12 +7,12 @@ export default function MeetFooter() {
       <div className="flex items-center gap-6">
         {/* Mic */}
         <button className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
-          Mic
+         <Mic size={25} />
         </button>
 
         {/* Camera */}
         <button className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
-          Camera
+          <Camera size={25} />
         </button>
 
         {/* Leave */}
