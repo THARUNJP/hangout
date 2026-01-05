@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function UsePermission(perm: PermissionName) {
+export default function usePermission(perm: PermissionName) {
   const [state, setState] = useState<PermissionState>("prompt");
 
   useEffect(() => {
