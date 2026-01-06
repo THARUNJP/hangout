@@ -4,8 +4,7 @@ import { useParams } from "react-router-dom";
 import { useMeetingSocket } from "../../../hooks/useSignalling";
 import { useMedia } from "../../../hooks/useMedia";
 import { ParticipantTile } from "./tile";
-import { useParticipantsStore } from "../../../store";
-import { useStreamStore } from "../../../store/stream.store";
+import { useParticipantsStore, useStreamStore } from "../../../store";
 
 export default function VideoGrid() {
   const videoRef = useRef<HTMLVideoElement>(null);

@@ -1,6 +1,6 @@
 import { Camera, CameraOff, Mic, MicOff } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useStreamStore } from "../../../store/stream.store";
+import { useStreamStore } from "../../../store";
 
 export default function MeetFooter() {
   const toggleMic = useStreamStore((state) => state.toggleMic);
