@@ -1,13 +1,13 @@
 import type { CallType } from "../lib/constant";
 
 export type Participants = {
-  userId:string;
-  socketId: string;                 // userId (stable)
-  name?: string;              // optional for now
+  userId: string;
+  socketId: string; // userId (stable)
+  name?: string; // optional for now
 
   // Media
-  mediaId?:string;
-  stream?: MediaStream;       // combined audio + video (for <video>)
+  mediaId?: string;
+  stream?: MediaStream; // combined audio + video (for <video>)
   videoTrack?: MediaStreamTrack;
   audioTrack?: MediaStreamTrack;
 
@@ -20,7 +20,7 @@ export type Participants = {
   videoProducerId?: string;
   audioProducerId?: string;
 };
-export type CallType =(typeof CallType)[keyof typeof CallType];
+export type CallType = (typeof CallType)[keyof typeof CallType];
 
 export interface ParticipantsState {
   participants: Participants[];
@@ -32,6 +32,17 @@ export interface ParticipantsState {
 }
 
 export interface SessionState {
-  sessionReady:boolean;
-  setSessionReady:(isReady:boolean)=>void;
+  sessionReady: boolean;
+  setSessionReady: (isReady: boolean) => void;
+}
+
+export interface StreamState {
+  stream: MediaStream | null;
+  micEnabled: boolean;
+  cameraEnabled: boolean;
+
+  setStream: (stream: MediaStream) => void;
+  toggleMic: (enabled: boolean) => void;
+  toggleCamera: (enabled: boolean) => void;
+  stopStream: () => void;
 }

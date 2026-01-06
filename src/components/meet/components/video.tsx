@@ -1,18 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { getGridClass, getUserDevice, lsGetItem } from "../../../lib/helper";
-import {useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useMeetingSocket } from "../../../hooks/useSignalling";
 import { useMedia } from "../../../hooks/useMedia";
 import { ParticipantTile } from "./tile";
 import { useParticipantsStore } from "../../../store";
+import { useStreamStore } from "../../../store/stream.store";
 
 export default function VideoGrid() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [stream, setStream] = useState<MediaStream | null>(null);
   const { code } = useParams<{ code: string }>();
   const name: string = lsGetItem("name") || "unknown";
   const participants = useParticipantsStore((state) => state.participants);
-
+  const setStream = useStreamStore((state) => state.setStream);
 
   useEffect(() => {
     async function fetchUserMedia() {
@@ -26,7 +26,7 @@ export default function VideoGrid() {
     fetchUserMedia();
 
     return () => {
-      stream?.getTracks().forEach((track) => track.stop());
+      // stream?.getTracks().forEach((track) => track.stop());
     };
   }, []);
   useMeetingSocket(code!, name);

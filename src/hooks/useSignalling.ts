@@ -8,8 +8,7 @@ import {
 import { CallType } from "../lib/constant";
 import type { Participants } from "../types/types";
 import { lsGetItem } from "../lib/helper";
-import { useParticipantsStore } from "../store";
-import { UseSessionStore } from "../store/session.store";
+import { useParticipantsStore, UseSessionStore } from "../store";
 
 export function useMeetingSocket(sessionCode: string, name: string) {
   const setParticipants = useParticipantsStore((s) => s.setParticipants);

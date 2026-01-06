@@ -3,8 +3,7 @@ import { mediaSocket } from "../socket";
 import { Device } from "mediasoup-client";
 import type { Transport } from "mediasoup-client/types";
 import { getUserDevice, lsGetItem } from "../lib/helper";
-import { useParticipantsStore } from "../store";
-import { UseSessionStore } from "../store/session.store";
+import { useParticipantsStore, UseSessionStore } from "../store";
 
 export function useMedia(sessionCode: string, name: string) {
   const deviceRef = useRef<Device | null>(null);
