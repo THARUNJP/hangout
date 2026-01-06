@@ -13,6 +13,7 @@ export default function VideoGrid() {
   const name: string = lsGetItem("name") || "unknown";
   const participants = useParticipantsStore((state) => state.participants);
   const setStream = useStreamStore((state) => state.setStream);
+  const stopStream = useStreamStore((state) => state.stopStream);
 
   useEffect(() => {
     async function fetchUserMedia() {
@@ -26,7 +27,7 @@ export default function VideoGrid() {
     fetchUserMedia();
 
     return () => {
-      // stream?.getTracks().forEach((track) => track.stop());
+      stopStream();
     };
   }, []);
   useMeetingSocket(code!, name);
