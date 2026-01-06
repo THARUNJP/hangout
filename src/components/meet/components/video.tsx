@@ -16,18 +16,24 @@ export default function VideoGrid() {
   const stopStream = useStreamStore((state) => state.stopStream);
 
   useEffect(() => {
+    let mounted = true;
+
     async function fetchUserMedia() {
       const stream = await getUserDevice();
-      if (stream && videoRef.current) {
+      if (!stream || !mounted) return;
+
+      if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
-        setStream(stream);
       }
+
+      setStream(stream);
     }
+
     fetchUserMedia();
 
     return () => {
-      stopStream();
+      mounted = false;
+      stopStream(); // stops tracks + clears Zustand
     };
   }, []);
   useMeetingSocket(code!, name);

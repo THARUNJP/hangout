@@ -4,7 +4,6 @@ import { Device } from "mediasoup-client";
 import type { Transport } from "mediasoup-client/types";
 import { getUserDevice, lsGetItem } from "../lib/helper";
 import { useParticipantsStore, UseSessionStore } from "../store";
-import { useStreamStore } from "../store/stream.store";
 
 export function useMedia(sessionCode: string, name: string) {
   const deviceRef = useRef<Device | null>(null);
@@ -14,7 +13,6 @@ export function useMedia(sessionCode: string, name: string) {
     (state) => state.updateParticipantStream
   );
   const sessionReady = UseSessionStore((state) => state.sessionReady);
-  const stream = useStreamStore((state) => state.stream);
 
   const pendingProducersRef = useRef<
     { producerId: string; kind: string; userId: string }[]
@@ -116,7 +114,7 @@ export function useMedia(sessionCode: string, name: string) {
                     }
                   );
 
-                  // const stream = await getUserDevice();
+                  const stream = await getUserDevice(); // need to remove this redudancy logic
                   if (!stream) return;
 
                   const audioTrack = stream.getAudioTracks()[0];

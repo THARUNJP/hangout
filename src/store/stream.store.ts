@@ -38,8 +38,8 @@ export const useStreamStore = create<StreamState>((set, get) => ({
 
     set({
       stream: null,
-      micEnabled: false,
-      cameraEnabled: false,
+      micEnabled: true,
+      cameraEnabled: true,
     });
   },
 }));
