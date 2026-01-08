@@ -7,7 +7,6 @@ export default function MeetFooter() {
   const toggleCamera = useStreamStore((state) => state.toggleCamera);
   const micEnabled: boolean = useStreamStore((state) => state.micEnabled);
   const cameraEnabled: boolean = useStreamStore((state) => state.cameraEnabled);
-  console.log(micEnabled, cameraEnabled, "??;");
 
   return (
     <footer className="w-full h-16 bg-white border-t border-gray-200 flex items-center justify-center">

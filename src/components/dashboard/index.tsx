@@ -4,6 +4,7 @@ import NamePromptModal from "../propt-modal";
 import { lsGetItem, lsSetItem } from "../../lib/helper";
 import { useNavigate } from "react-router-dom";
 import { SiteLoader } from "../loader";
+import { createSession } from "../../service/session.service";
 // import { useBlockBrowserNavigation } from "../../hooks/useNavigationBlock";
 
 function Dashboard() {
@@ -38,9 +39,15 @@ function Dashboard() {
   };
 
   const createNewMeeting = async () => {
-    setIsloading(true);
-
-    setIsloading(false);
+    try {
+      setIsloading(true);
+      const response = await createSession();
+      console.log(response);
+    } catch (err) {
+      console.log("err in create new meeting", err);
+    } finally {
+      setIsloading(false);
+    }
   };
 
   return (
