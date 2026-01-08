@@ -1,4 +1,3 @@
-import { Loader } from "lucide-react";
 
 export function getGridClass(count: number) {
   switch (true) {
@@ -43,6 +42,4 @@ export const lsGetItem = (key: string) => {
   return localStorage.getItem(key);
 };
 
-export const siteLoader = (colour: string) => {
-  return <Loader size={50} className="animate-spin" color={colour} />;
-};
+
