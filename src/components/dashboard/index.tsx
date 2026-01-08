@@ -36,60 +36,73 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center px-4">
       <NamePromptModal
         open={showNamePrompt}
         onContinue={handleContinue}
         onClose={() => setShowNamePrompt(false)}
       />
 
-      <div className="w-full max-w-xl bg-white rounded-xl shadow-lg p-6 space-y-6">
+      <div className="w-full max-w-3xl bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200 p-8 space-y-8">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-800">
-            Realtime Session Lobby
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-semibold text-gray-900">
+            Video Calls and
           </h1>
-          <p className="text-sm text-gray-500">
-            Create a session or join an existing one
-          </p>
+         <h1 className="text-3xl font-semibold text-gray-900">meeting for everyone</h1>
         </div>
 
-        {/* Create Session */}
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Enter session code"
-            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">
-            Create
+        {/* Create / Join Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Create */}
+          <button className="flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-xl text-sm font-medium hover:bg-blue-700 transition shadow-md">
+            + New meeting
           </button>
+
+          {/* Join */}
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Enter meeting code"
+              className="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button className="bg-gray-900 text-white px-5 rounded-xl text-sm hover:bg-gray-800 transition">
+              Join
+            </button>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-xs text-gray-400">ACTIVE SESSIONS</span>
+          <div className="flex-1 h-px bg-gray-200" />
         </div>
 
         {/* Sessions List */}
         <div className="space-y-3">
-          <h2 className="text-lg font-medium text-gray-700">Active Sessions</h2>
-
           {sessions.length === 0 ? (
-            <p className="text-sm text-gray-500">No active sessions</p>
+            <div className="text-center py-10 text-gray-500 text-sm">
+              No active sessions right now
+            </div>
           ) : (
             sessions.map((session) => (
               <div
                 key={session.sessionCode}
-                className="flex items-center justify-between border border-gray-200 rounded-lg px-4 py-3"
+                className="flex items-center justify-between rounded-xl border border-gray-200 px-5 py-4 hover:shadow-md transition bg-white"
               >
                 <div>
-                  <p className="font-medium text-gray-800">
+                  <p className="font-medium text-gray-900">
                     {session.sessionCode}
                   </p>
-                  <p className="text-sm text-gray-500">
-                    Participants: {session.participants}
+                  <p className="text-xs text-gray-500">
+                    {session.participants} participants
                   </p>
                 </div>
 
                 <button
                   onClick={() => handleJoinClick(session.sessionCode)}
-                  className="bg-green-600 text-white px-4 py-1.5 rounded-md hover:bg-green-700 transition"
+                  className="bg-green-600 text-white px-5 py-2 rounded-lg text-sm hover:bg-green-700 transition"
                 >
                   Join
                 </button>
