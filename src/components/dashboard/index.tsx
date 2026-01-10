@@ -30,6 +30,7 @@ function Dashboard() {
 
     if (storedName) {
       navigate(`/meet/${sessionCode}`);
+      showHotToast("You joined the session", "success");
     } else {
       setShowNamePrompt(true);
     }
@@ -105,45 +106,6 @@ function Dashboard() {
               Join
             </button>
           </div>
-        </div>
-
-        {/* Divider */}
-        <div className="flex items-center gap-3">
-          <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-xs text-gray-400">ACTIVE SESSIONS</span>
-          <div className="flex-1 h-px bg-gray-200" />
-        </div>
-
-        {/* Sessions List */}
-        <div className="space-y-3">
-          {sessions.length === 0 ? (
-            <div className="text-center py-10 text-gray-500 text-sm">
-              No active sessions right now
-            </div>
-          ) : (
-            sessions.map((session) => (
-              <div
-                key={session.sessionCode}
-                className="flex items-center justify-between rounded-xl border border-gray-200 px-5 py-4 hover:shadow-md transition bg-white"
-              >
-                <div>
-                  <p className="font-medium text-gray-900">
-                    {session.sessionCode}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {session.participants} participants
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => handleJoinClick(session.sessionCode)}
-                  className="bg-green-600 text-white px-5 py-2 rounded-lg text-sm hover:bg-green-700 transition"
-                >
-                  Join
-                </button>
-              </div>
-            ))
-          )}
         </div>
       </div>
     </div>
