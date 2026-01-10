@@ -42,4 +42,9 @@ export const lsGetItem = (key: string) => {
   return localStorage.getItem(key);
 };
 
+export const isValidateSessionCode = (code: string): boolean => {
+  const strictRegex = /^[a-z]{3}-[a-z]{4}-[a-z]{3}$/;
+  return strictRegex.test(code.trim());
+};
+
 

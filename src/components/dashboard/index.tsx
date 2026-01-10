@@ -1,7 +1,7 @@
 import { sessions } from "../../lib/constant";
 import { useState } from "react";
 import NamePromptModal from "../propt-modal";
-import { lsGetItem, lsSetItem } from "../../lib/helper";
+import { isValidateSessionCode, lsGetItem, lsSetItem } from "../../lib/helper";
 import { useNavigate } from "react-router-dom";
 import { createSession } from "../../service/session.service";
 import { SiteLoader } from "../../lib/loader";
@@ -14,13 +14,18 @@ function Dashboard() {
     null
   );
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const [input, setInput] = useState<string>("");
   // useBlockBrowserNavigation();
   const navigate = useNavigate();
 
   const handleJoinClick = (sessionCode: string) => {
+    const valid = isValidateSessionCode(sessionCode);
+    if (!valid) {
+      showHotToast("Invalid session code", "error");
+      return;
+    }
+    // need to do api call for check it is registered session code
     const storedName = lsGetItem("name");
-
     setSelectedSessionCode(sessionCode);
 
     if (storedName) {
@@ -32,10 +37,8 @@ function Dashboard() {
 
   const handleContinue = (name: string) => {
     if (!selectedSessionCode) return;
-
     lsSetItem("name", name);
     setShowNamePrompt(false);
-
     navigate(`/meet/${selectedSessionCode}`);
   };
 
@@ -44,7 +47,7 @@ function Dashboard() {
       setIsLoading(true);
       const { message, data } = await createSession();
       showHotToast(message, "success");
-      navigate(`/meet/${data.session_code}`)
+      navigate(`/meet/${data.session_code}`);
     } catch (err: any) {
       console.error("Error creating meeting:", err);
       showHotToast(
@@ -89,10 +92,16 @@ function Dashboard() {
           <div className="flex gap-2">
             <input
               type="text"
+              onChange={(e) => setInput(e?.target?.value)}
+              value={input}
               placeholder="Enter meeting code"
               className="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <button className="bg-gray-900 text-white px-5 rounded-xl text-sm hover:bg-gray-800 transition">
+            <span></span>
+            <button
+              onClick={() => handleJoinClick(input)}
+              className="bg-gray-900 text-white px-5 rounded-xl text-sm hover:bg-gray-800 transition cursor-pointer"
+            >
               Join
             </button>
           </div>
