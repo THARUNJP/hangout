@@ -1,5 +1,10 @@
-import { useRouteError, isRouteErrorResponse, useNavigate } from "react-router-dom";
+import {
+  useRouteError,
+  isRouteErrorResponse,
+  useNavigate,
+} from "react-router-dom";
 import { showHotToast } from "../../../lib/toast";
+import { useEffect } from "react";
 
 export default function MeetingError() {
   const error = useRouteError();
@@ -7,11 +12,13 @@ export default function MeetingError() {
 
   let message = "Something went wrong";
 
-  
   if (isRouteErrorResponse(error)) {
     message = error?.data;
-    showHotToast(message,"error")
   }
+
+  useEffect(() => {
+    showHotToast(message, "error");
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-100 px-4">
@@ -20,9 +27,7 @@ export default function MeetingError() {
           Unable to join meeting
         </h1>
 
-        <p className="text-gray-600 mb-6">
-          {message}
-        </p>
+        <p className="text-gray-600 mb-6">{message}</p>
 
         <button
           onClick={() => navigate("/")}
