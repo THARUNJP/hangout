@@ -3,8 +3,8 @@ import { useState } from "react";
 import NamePromptModal from "../propt-modal";
 import { lsGetItem, lsSetItem } from "../../lib/helper";
 import { useNavigate } from "react-router-dom";
-import { SiteLoader } from "../loader";
 import { createSession } from "../../service/session.service";
+import { SiteLoader } from "../../lib/loader";
 // import { useBlockBrowserNavigation } from "../../hooks/useNavigationBlock";
 
 function Dashboard() {
