@@ -46,3 +46,17 @@ export interface StreamState {
   toggleCamera: (enabled: boolean) => void;
   stopStream: () => void;
 }
+
+export interface CreateSessionResponse {
+  status: boolean;
+  message: string;
+  data: {
+    id: string;
+    session_code: string;
+    call_type: string;
+    max_participants: number;
+    host_name: string;
+    status: string;
+    created_at: string;
+  };
+}

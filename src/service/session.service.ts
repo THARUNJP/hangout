@@ -1,11 +1,22 @@
 import api from "../clientApi/clientApi";
 import { lsGetItem } from "../lib/helper";
+import type { CreateSessionResponse } from "../types/types";
 
-export const createSession = async () => {
+export const createSession = async (): Promise<CreateSessionResponse> => {
   const hostName = lsGetItem("name");
   const userId = lsGetItem("userId");
-  const callType = "SFU";
-  const data = { hostName, callType, userId };
-  const response = api.post("/api/session/create", data);
-  return response;
+  const callType = "SFU"; // or dynamic
+
+  if (!hostName || !userId) throw new Error("User info missing");
+
+  const { data } = await api.post<CreateSessionResponse>(
+    "/api/session/create",
+    {
+      hostName,
+      callType,
+      userId,
+    }
+  );
+
+  return data;
 };

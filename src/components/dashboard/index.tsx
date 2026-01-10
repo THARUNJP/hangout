@@ -5,6 +5,7 @@ import { lsGetItem, lsSetItem } from "../../lib/helper";
 import { useNavigate } from "react-router-dom";
 import { createSession } from "../../service/session.service";
 import { SiteLoader } from "../../lib/loader";
+import { showHotToast } from "../../lib/toast";
 // import { useBlockBrowserNavigation } from "../../hooks/useNavigationBlock";
 
 function Dashboard() {
@@ -12,7 +13,7 @@ function Dashboard() {
   const [selectedSessionCode, setSelectedSessionCode] = useState<string | null>(
     null
   );
-  const [isLoading, setIsloading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // useBlockBrowserNavigation();
   const navigate = useNavigate();
@@ -40,13 +41,18 @@ function Dashboard() {
 
   const createNewMeeting = async () => {
     try {
-      setIsloading(true);
-      const response = await createSession();
-      console.log(response);
-    } catch (err) {
-      console.log("err in create new meeting", err);
+      setIsLoading(true);
+      const { message, data } = await createSession();
+      showHotToast(message, "success");
+      navigate(`/meet/${data.session_code}`)
+    } catch (err: any) {
+      console.error("Error creating meeting:", err);
+      showHotToast(
+        err?.response?.data?.message || err?.message || "Something went wrong",
+        "error"
+      );
     } finally {
-      setIsloading(false);
+      setIsLoading(false);
     }
   };
 
@@ -74,7 +80,7 @@ function Dashboard() {
           {/* Create */}
           <button
             onClick={async () => await createNewMeeting()}
-            className="flex items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-xl text-sm font-medium hover:bg-blue-700 transition shadow-md"
+            className="flex cursor-pointer items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-xl text-sm font-medium hover:bg-blue-700 transition shadow-md"
           >
             + New meeting
           </button>
