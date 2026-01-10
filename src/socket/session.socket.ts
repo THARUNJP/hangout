@@ -1,5 +1,5 @@
 import { socket } from ".";
-import { lsSetItem } from "../lib/helper";
+import { lsGetItem } from "../lib/helper";
 import type { CallType } from "../types/types";
 import { v4 as uuidv4 } from "uuid";
 
@@ -8,8 +8,7 @@ export function createSession(sessionCode: string, callType: CallType) {
 }
 
 export function joinSession(sessionCode: string, participantName: string) {
-  const userId = uuidv4();
-  lsSetItem("userId", userId);
+  const userId = lsGetItem("userId") || uuidv4()
   socket.emit("join-session", { sessionCode, participantName, userId });
 }
 

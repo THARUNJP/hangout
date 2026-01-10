@@ -1,21 +1,23 @@
 import api from "../clientApi/clientApi";
-import { lsGetItem } from "../lib/helper";
+import { lsGetItem, lsSetItem } from "../lib/helper";
+import { v4 as uuidv4 } from "uuid";
 import type {
   CreateSessionResponse,
   ValidateSessionResponse,
 } from "../types/types";
 
 export const createSession = async (): Promise<CreateSessionResponse> => {
-  const hostName = lsGetItem("name");
-  const userId = lsGetItem("userId");
+  let userId = lsGetItem("userId");
+  if (!userId) {
+    userId = uuidv4();
+    lsSetItem("userId", userId);
+  }
   const callType = "SFU"; // or dynamic
-
-  if (!hostName || !userId) throw new Error("User info missing");
+  if (!userId) throw new Error("User info missing");
 
   const { data } = await api.post<CreateSessionResponse>(
     "/api/session/create",
     {
-      hostName,
       callType,
       userId,
     }

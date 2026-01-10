@@ -61,8 +61,7 @@ export interface CreateSessionResponse {
   };
 }
 
-export type ValidateSessionResponse = {
-  status: CreateSessionResponse["status"];
-  message: CreateSessionResponse["message"];
-  data: Pick<CreateSessionResponse["data"], "id">;
-};
+export type ValidateSessionResponse = Pick<
+  CreateSessionResponse,
+  "status" | "message"
+>;
