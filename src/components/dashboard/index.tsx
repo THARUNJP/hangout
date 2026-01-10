@@ -1,12 +1,10 @@
-import { sessions } from "../../lib/constant";
 import { useState } from "react";
 import NamePromptModal from "../propt-modal";
 import { isValidateSessionCode, lsGetItem, lsSetItem } from "../../lib/helper";
 import { useNavigate } from "react-router-dom";
-import { createSession } from "../../service/session.service";
+import { createSession, validateSession } from "../../service/session.service";
 import { SiteLoader } from "../../lib/loader";
 import { showHotToast } from "../../lib/toast";
-// import { useBlockBrowserNavigation } from "../../hooks/useNavigationBlock";
 
 function Dashboard() {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
@@ -18,13 +16,17 @@ function Dashboard() {
   // useBlockBrowserNavigation();
   const navigate = useNavigate();
 
-  const handleJoinClick = (sessionCode: string) => {
+  const handleJoinClick = async (sessionCode: string) => {
     const valid = isValidateSessionCode(sessionCode);
     if (!valid) {
       showHotToast("Invalid session code", "error");
       return;
     }
-    // need to do api call for check it is registered session code
+    const session = await validateSession(sessionCode);
+    if (!session.status) {
+      showHotToast(session.message, "error");
+      return;
+    }
     const storedName = lsGetItem("name");
     setSelectedSessionCode(sessionCode);
 

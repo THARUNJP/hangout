@@ -1,6 +1,9 @@
 import api from "../clientApi/clientApi";
 import { lsGetItem } from "../lib/helper";
-import type { CreateSessionResponse } from "../types/types";
+import type {
+  CreateSessionResponse,
+  ValidateSessionResponse,
+} from "../types/types";
 
 export const createSession = async (): Promise<CreateSessionResponse> => {
   const hostName = lsGetItem("name");
@@ -18,5 +21,14 @@ export const createSession = async (): Promise<CreateSessionResponse> => {
     }
   );
 
+  return data;
+};
+
+export const validateSession = async (
+  code: string
+): Promise<ValidateSessionResponse> => {
+  const { data } = await api.get<ValidateSessionResponse>(
+    `/api/session/${code}`
+  );
   return data;
 };
