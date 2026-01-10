@@ -5,36 +5,51 @@ import { useNavigate } from "react-router-dom";
 import { createSession, validateSession } from "../../service/session.service";
 import { SiteLoader } from "../../lib/loader";
 import { showHotToast } from "../../lib/toast";
+import { v4 as uuidV4 } from "uuid";
 
 function Dashboard() {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
-  const [selectedSessionCode, setSelectedSessionCode] = useState<string | null>(
-    null
-  );
+  const [selectedSessionCode, setSelectedSessionCode] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [input, setInput] = useState<string>("");
   // useBlockBrowserNavigation();
   const navigate = useNavigate();
 
-  const handleJoinClick = async (sessionCode: string) => {
-    const valid = isValidateSessionCode(sessionCode);
-    if (!valid) {
-      showHotToast("Invalid session code", "error");
-      return;
-    }
-    const session = await validateSession(sessionCode);
-    if (!session.status) {
-      showHotToast(session.message, "error");
-      return;
-    }
-    const storedName = lsGetItem("name");
-    setSelectedSessionCode(sessionCode);
+  const handleJoinClick = async () => {
+    try {
+      setIsLoading(true)
+      const valid = isValidateSessionCode(selectedSessionCode);
 
-    if (storedName) {
-      navigate(`/meet/${sessionCode}`);
-      showHotToast("You joined the session", "success");
-    } else {
-      setShowNamePrompt(true);
+      if (!valid) {
+        showHotToast("Invalid session code", "error");
+        return;
+      }
+
+      const session = await validateSession(selectedSessionCode);
+
+      if (!session.status) {
+        showHotToast(session.message, "error");
+        return;
+      }
+
+      const storedName = lsGetItem("name");
+      lsSetItem("userId",uuidV4()) 
+      if (storedName) {
+        navigate(`/meet/${selectedSessionCode}`);
+        showHotToast("You joined the session", "success");
+      } else {
+        setShowNamePrompt(true);
+      }
+    } catch (error: any) {
+      console.error("Join session failed:", error);
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Unable to join the session right now. Please try again.";
+
+      showHotToast(message, "error");
+    }
+    finally{
+      setIsLoading(false)
     }
   };
 
@@ -49,8 +64,14 @@ function Dashboard() {
     try {
       setIsLoading(true);
       const { message, data } = await createSession();
-      showHotToast(message, "success");
-      navigate(`/meet/${data.session_code}`);
+      const storedName = lsGetItem("name");
+      if (storedName) {
+        showHotToast(message, "success");
+        navigate(`/meet/${data.session_code}`);
+      } else {
+        setSelectedSessionCode(data.session_code);
+        setShowNamePrompt(true);
+      }
     } catch (err: any) {
       console.error("Error creating meeting:", err);
       showHotToast(
@@ -95,14 +116,14 @@ function Dashboard() {
           <div className="flex gap-2">
             <input
               type="text"
-              onChange={(e) => setInput(e?.target?.value)}
-              value={input}
+              onChange={(e) => setSelectedSessionCode(e?.target?.value)}
+              value={selectedSessionCode}
               placeholder="Enter meeting code"
               className="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <span></span>
             <button
-              onClick={() => handleJoinClick(input)}
+              onClick={() => handleJoinClick()}
               className="bg-gray-900 text-white px-5 rounded-xl text-sm hover:bg-gray-800 transition cursor-pointer"
             >
               Join

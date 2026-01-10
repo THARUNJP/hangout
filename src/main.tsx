@@ -1,24 +1,43 @@
-// import { StrictMode } from 'react'
 import { createRoot } from "react-dom/client";
-import "./index.css";
-import App from "./App.tsx";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import App from "./App";
+import Dashboard from "./components/dashboard";
+import Meet from "./components/meet";
+import { MeetingGuard } from "./components/meet/components/meetingGuard";
+import { meetingLoader } from "./components/meet/components/meetingLoader";
+import "./index.css";
+import MeetingError from "./components/meet/components/meetingError";
+import GlobalError from "./lib/globalError";
+
+const router = createBrowserRouter([
+  {
+    element: <App />,
+    errorElement: <GlobalError />,
+    children: [
+      {
+        path: "/",
+        element: <Dashboard />,
+      },
+      {
+        path: "/meet/:code",
+        loader: meetingLoader,
+        element: <MeetingGuard />,
+        errorElement: <MeetingError />,
+        children: [
+          {
+            index: true,
+            element: <Meet />,
+          },
+        ],
+      },
+    ],
+  },
+]);
 
 createRoot(document.getElementById("root")!).render(
-  // <StrictMode>
   <>
-    <App />
-    <Toaster
-      position="top-right"
-      reverseOrder={false}
-      toastOptions={{
-        duration: 3000,
-        style: {
-          fontSize: "14px",
-          padding: "12px 16px",
-        },
-      }}
-    />
+    <RouterProvider router={router} />
+    <Toaster position="top-right" />
   </>
-  // </StrictMode>,
 );

@@ -65,3 +65,10 @@ export type ValidateSessionResponse = Pick<
   CreateSessionResponse,
   "status" | "message"
 >;
+
+export type NamePromptModalProps = {
+  open: boolean;
+  onContinue: (name: string) => void;
+  onClose: () => void;
+};
+

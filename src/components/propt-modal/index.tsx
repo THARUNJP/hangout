@@ -1,11 +1,6 @@
 import { X } from "lucide-react";
-import { useState } from "react";
-
-type NamePromptModalProps = {
-  open: boolean;
-  onContinue: (name: string) => void;
-  onClose: () => void;
-};
+import { useEffect, useState } from "react";
+import type { NamePromptModalProps } from "../../types/types";
 
 export default function NamePromptModal({
   open,
@@ -13,6 +8,10 @@ export default function NamePromptModal({
   onClose,
 }: NamePromptModalProps) {
   const [name, setName] = useState("");
+
+  useEffect(() => {
+    if (!open) setName("");
+  }, [open]);
 
   if (!open) return null;
 

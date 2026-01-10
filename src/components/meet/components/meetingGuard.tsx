@@ -1,19 +1,12 @@
-import type { JSX } from "react";
-import { Navigate, useParams } from "react-router-dom";
-import { validateSession } from "../../../service/session.service";
-import { showHotToast } from "../../../lib/toast";
+import { Outlet, Navigate, useLoaderData } from "react-router-dom";
+import type { ValidateSessionResponse } from "../../../types/types";
 
-export  function MeetingGuard({ children }: { children: JSX.Element }) {
-  const { code } = useParams<{ code: string }>();
-  if (!code) {
-    return <Navigate to="/" replace />; // replace the current history entry user cant push back 
+export function MeetingGuard() {
+  const session = useLoaderData() as ValidateSessionResponse;
+
+  if (!session.status) {
+    return <Navigate to="/" replace />;
   }
-  // const session = await validateSession(code);// session is valid check
 
-  // if(!session.status){
-  //   showHotToast(session.message,"error")
-  //   return <Navigate to="/" replace />;
-  // }
-
-  return children;
+  return <Outlet />;
 }
