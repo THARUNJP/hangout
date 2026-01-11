@@ -1,12 +1,22 @@
 import { Camera, CameraOff, Mic, MicOff } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useStreamStore } from "../../../store";
+import { confirmAction } from "../../../lib/helper";
+import { LeaveMeetingMessage } from "../../../lib/constant";
 
 export default function MeetFooter() {
   const toggleMic = useStreamStore((state) => state.toggleMic);
   const toggleCamera = useStreamStore((state) => state.toggleCamera);
   const micEnabled: boolean = useStreamStore((state) => state.micEnabled);
   const cameraEnabled: boolean = useStreamStore((state) => state.cameraEnabled);
+  const navigate = useNavigate();
+
+  const handleLeave = async () => {
+    const confirmed = await confirmAction(LeaveMeetingMessage);
+    if (confirmed) {
+      navigate("/");
+    }
+  };
 
   return (
     <footer className="w-full h-16 bg-white border-t border-gray-200 flex items-center justify-center">
@@ -28,12 +38,12 @@ export default function MeetFooter() {
         </button>
 
         {/* Leave */}
-        <Link
-          to={"/"}
-          className="px-6 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
+        <div
+          onClick={() => handleLeave()}
+          className="px-6 cursor-pointer py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
         >
           Leave
-        </Link>
+        </div>
 
         {/* More */}
         <button className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition">

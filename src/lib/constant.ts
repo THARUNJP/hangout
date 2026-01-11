@@ -17,3 +17,6 @@ export const CallType = {
   RTC: "RTC",
   SFU: "SFU",
 } as const;
+
+export const LeaveMeetingMessage: string =
+  "Are you sure you want to leave the meeting?";

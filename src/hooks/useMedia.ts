@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { mediaSocket } from "../socket";
 import { Device } from "mediasoup-client";
 import type { Transport } from "mediasoup-client/types";
-import { getUserDevice, lsGetItem } from "../lib/helper";
+import { lsGetItem } from "../lib/helper";
 import {
   useParticipantsStore,
   UseSessionStore,

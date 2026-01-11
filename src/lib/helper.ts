@@ -1,3 +1,4 @@
+import { showConfirm } from "./toast";
 
 export function getGridClass(count: number) {
   switch (true) {
@@ -47,4 +48,12 @@ export const isValidateSessionCode = (code: string): boolean => {
   return strictRegex.test(code.trim());
 };
 
-
+export async function confirmAction(message: string, confirmText = "Yes") {
+  try {
+    const result = await showConfirm(message, confirmText);
+    return result === true; // ensure boolean
+  } catch (err) {
+    console.error("Confirmation error:", err);
+    return false;
+  }
+}
