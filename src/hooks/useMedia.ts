@@ -119,7 +119,6 @@ export function useMedia(sessionCode: string, name: string) {
                   );
 
                   let stream = useStreamStore.getState().stream;
-
                   if (!stream) {
                     // wait until stream is ready
                     stream = await new Promise<MediaStream>((resolve) => {
