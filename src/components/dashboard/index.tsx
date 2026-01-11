@@ -16,7 +16,7 @@ function Dashboard() {
 
   const handleJoinClick = async () => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       const valid = isValidateSessionCode(selectedSessionCode);
 
       if (!valid) {
@@ -32,7 +32,7 @@ function Dashboard() {
       }
 
       const storedName = lsGetItem("name");
-      lsSetItem("userId",uuidV4()) 
+      lsSetItem("userId", uuidV4());
       if (storedName) {
         navigate(`/meet/${selectedSessionCode}`);
         showHotToast("You joined the session", "success");
@@ -47,9 +47,8 @@ function Dashboard() {
         "Unable to join the session right now. Please try again.";
 
       showHotToast(message, "error");
-    }
-    finally{
-      setIsLoading(false)
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -106,7 +105,7 @@ function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Create */}
           <button
-            onClick={async () => await createNewMeeting()}
+            onClick={() => createNewMeeting()}
             className="flex cursor-pointer items-center justify-center gap-2 bg-blue-600 text-white py-3 rounded-xl text-sm font-medium hover:bg-blue-700 transition shadow-md"
           >
             + New meeting
