@@ -3,7 +3,11 @@ import { mediaSocket } from "../socket";
 import { Device } from "mediasoup-client";
 import type { Transport } from "mediasoup-client/types";
 import { getUserDevice, lsGetItem } from "../lib/helper";
-import { useParticipantsStore, UseSessionStore } from "../store";
+import {
+  useParticipantsStore,
+  UseSessionStore,
+  useStreamStore,
+} from "../store";
 
 export function useMedia(sessionCode: string, name: string) {
   const deviceRef = useRef<Device | null>(null);
@@ -114,8 +118,22 @@ export function useMedia(sessionCode: string, name: string) {
                     }
                   );
 
-                  const stream = await getUserDevice(); // need to remove this redudancy logic
-                  if (!stream) return;
+                  let stream = useStreamStore.getState().stream;
+
+                  if (!stream) {
+                    // wait until stream is ready
+                    stream = await new Promise<MediaStream>((resolve) => {
+                      const unsub = useStreamStore.subscribe(
+                        (state) => state.stream,
+                        (s) => {
+                          if (s) {
+                            unsub(); // stop listening
+                            resolve(s);
+                          }
+                        }
+                      );
+                    });
+                  }
 
                   const audioTrack = stream.getAudioTracks()[0];
                   if (audioTrack)
