@@ -9,6 +9,7 @@ import { CallType } from "../lib/constant";
 import type { Participants } from "../types/types";
 import { lsGetItem } from "../lib/helper";
 import { useParticipantsStore, UseSessionStore } from "../store";
+import { showHotToast } from "../lib/toast";
 
 export function useMeetingSocket(sessionCode: string, name: string) {
   const setParticipants = useParticipantsStore((s) => s.setParticipants);
@@ -43,9 +44,12 @@ export function useMeetingSocket(sessionCode: string, name: string) {
 
     const onParticipantsUpdated = ({
       participants: incoming,
+      message,
     }: {
       participants: Participants[];
+      message: string;
     }) => {
+      showHotToast(message, "success");
       if (selfIdRef.current) updateParticipant(incoming, selfIdRef.current);
     };
 
