@@ -6,10 +6,10 @@ import {
   leaveSession,
 } from "../socket/session.socket";
 import { CallType } from "../lib/constant";
-import type { Participants } from "../types/types";
 import { lsGetItem } from "../lib/helper";
 import { useParticipantsStore, UseSessionStore } from "../store";
 import { showHotToast } from "../lib/toast";
+import type { participantUpdatePayload } from "../types/types";
 
 export function useMeetingSocket(sessionCode: string, name: string) {
   const setParticipants = useParticipantsStore((s) => s.setParticipants);
@@ -45,11 +45,10 @@ export function useMeetingSocket(sessionCode: string, name: string) {
     const onParticipantsUpdated = ({
       participants: incoming,
       message,
-    }: {
-      participants: Participants[];
-      message: string;
-    }) => {
-      showHotToast(message, "success");
+      userId,
+    }: participantUpdatePayload) => {
+      const id = lsGetItem("userId");
+      if (id !== userId) showHotToast(message, "success");
       if (selfIdRef.current) updateParticipant(incoming, selfIdRef.current);
     };
 

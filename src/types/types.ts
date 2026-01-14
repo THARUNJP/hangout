@@ -72,3 +72,9 @@ export type NamePromptModalProps = {
   onClose: () => void;
 };
 
+export interface participantUpdatePayload {
+  participants: Participants[];
+  message: string;
+  userId: string;
+}
+
