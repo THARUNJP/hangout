@@ -9,9 +9,7 @@ import {
   useStreamStore,
 } from "../store";
 
-export default function useMedia(sessionCode: string, name: string) {
-  console.log(".....media use is called .......");
-  
+export function useMedia(sessionCode: string, name: string) {
   const deviceRef = useRef<Device | null>(null);
   const sendTransportRef = useRef<Transport | null>(null);
   const recvTransportRef = useRef<Transport | null>(null);
